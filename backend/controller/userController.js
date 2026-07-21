@@ -180,8 +180,30 @@ export const updatePassword = async (req, res, next) => {
 
 //User Profile update
 export const updateProfile = async (req, res, next) => {
-    const { name, email } = req.body;
+    const { name, email, avatar } = req.body;
     const updatedUserDetails = { name, email };
+
+    if (avatar && avatar !== "") {
+        const user = await User.findById(req.user.id);
+        const imageId = user.avatar?.public_id;
+
+        if (imageId) {
+            await cloudinary.uploader.destroy(imageId);
+        }
+
+        //Uploading photos to cloudinary (my folder name : "avatars")
+        const myCloud = await cloudinary.uploader.upload(avatar, {
+            folder: "avatars",
+            width: 150,
+            crop: "scale,"
+        });
+
+        updatedUserDetails.avatar = {
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url,
+        };
+    }
+
     const user = await User.findByIdAndUpdate(req.user.id, updatedUserDetails, { new: true, runValidators: true });
     res.status(200).json({
         success: true,
