@@ -1,0 +1,28 @@
+//Back end
+npm init -y
+need to change type to "module" in package.json
+npm i express
+npm i nodemon -D
+npm i dotenv
+npm i mongoose
+npm i validator
+npm i bcryptjs
+npm install jsonwebtoken
+npm i cookie-parser
+npm i crypto
+npm i nodemailer
+gmail-app-password - hqrg ruxt gzjl owmr
+need to change script to "start": "nodemon backend/server.js" in package.json
+npm i cloudinary
+npm install express-fileupload
+npm start
+
+
+//Frontend
+npm create vite@latest .
+npm install tailwindcss @tailwindcss/vite
+npm i react-router-dom lucide-react react-hot-toast
+npm i bootstrap-iconsN
+npm install @reduxjs/toolkit react-redux
+npm i axios
+npm run dev
