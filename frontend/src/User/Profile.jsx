@@ -55,12 +55,18 @@ const Profile = () => {
                             </div>
                         </div>
 
-                        <div className='w-full mt-8'>
+                        <div className='w-full mt-8 flex gap-4 flex-col sm:flex-row'>
                             <Link
                                 to="/profile/update"
                                 className='w-full flex justify-center py-3 px-4 border border-transparent rounded shadow-md shadow-gray-200 text-sm font-bold text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all active:scale-[0.98]'
                             >
                                 Edit Profile
+                            </Link>
+                            <Link
+                                to="/password/update"
+                                className='w-full flex justify-center py-3 px-4 border border-transparent rounded shadow-md shadow-gray-200 text-sm font-bold text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all active:scale-[0.98]'
+                            >
+                                Change Password
                             </Link>
                         </div>
                     </div>
