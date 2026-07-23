@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from "../Components/Navbar"
 import { useSelector, useDispatch } from "react-redux"
 import { Link, useNavigate } from "react-router-dom";
-import e from 'express';
+
 
 const UpdateProfile = () => {
 
