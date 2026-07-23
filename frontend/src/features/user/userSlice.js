@@ -31,7 +31,7 @@ export const loadUser = createAsyncThunk("user/loadUser", async (_, { rejectWith
 export const login = createAsyncThunk("user/login", async ({ email, password }, { rejectWithValue }) => {
     try {
         const config = {
-            Headers: {
+            headers: {
                 "Content-Type": "application/json"
             },
         };
@@ -51,7 +51,25 @@ export const logout = createAsyncThunk("user/logout", async (_, { rejectWithValu
     } catch (error) {
         return rejectWithValue(error?.response.data || "Logout failed")
     }
+});
+
+//Update Profile
+export const updateProfile = createAsyncThunk("user/updateProfile", async (userData, { rejectWithValue }) => {
+    try {
+        const config = {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        };
+        const { data } = await axios.put("/api/v1/profile/update", userData, config);
+        return data;
+
+    } catch (error) {
+        return rejectWithValue(error.response?.data || "Profile update failed")
+    }
 })
+
+
 
 const userSlice = createSlice({
     name: "user",
@@ -168,6 +186,24 @@ const userSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload?.message || "Failed to logout user profile";
             })
+
+        //builder for updateProfile function
+        builder
+            .addCase(updateProfile.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateProfile.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+                state.success = action.payload.success;
+                state.user = action.payload?.user || state.user;
+                localStorage.setItem("user", JSON.stringify(state.user));
+            })
+            .addCase(updateProfile.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Profile upload failed";
+            });
 
     },
 });

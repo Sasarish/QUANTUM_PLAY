@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react'
 import Navbar from "../Components/Navbar"
 import { useSelector, useDispatch } from "react-redux"
 import { Link, useNavigate } from "react-router-dom";
+import { loadUser, removeErrors, removeSuccess, updateProfile } from '../features/user/userSlice';
+import toast from "react-hot-toast";
 
 
 const UpdateProfile = () => {
 
     const { user, error, success, loading } = useSelector((state) => state.user);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -23,7 +27,19 @@ const UpdateProfile = () => {
                 setPreview(user.avatar.url);
             }
         }
-    }, [user]);
+
+        if (error) {
+            toast.error(error, { position: "top-center", autoClose: 3000 })
+            dispatch(removeErrors())
+        }
+
+        if (success) {
+            toast.success("Profile updated successfully", { position: "top-center", autoClose: 3000 })
+            dispatch(loadUser());
+            navigate("/profile");
+            dispatch(removeSuccess())
+        }
+    }, [user, dispatch, error, success]);
 
     //assigning selected photo to statevariable avatar, preview
     const handleChange = (e) => {
@@ -38,7 +54,7 @@ const UpdateProfile = () => {
     };
 
     //submiting updated user details to db
-    const updateProfileSubmit = () => {
+    const updateProfileSubmit = (e) => {
         e.preventDefault();
         const myForm = new FormData();
         myForm.set("name", name);
@@ -46,6 +62,9 @@ const UpdateProfile = () => {
         if (avatar) {
             myForm.set("avatar", avatar);
         }
+
+        //calling updateProfile function from userslice
+        dispatch(updateProfile(myForm))
     }
 
     return (

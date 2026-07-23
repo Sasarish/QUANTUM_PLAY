@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { loadUser } from "./features/user/userSlice";
 import Profile from "./User/Profile";
 import UpdateProfile from "./User/UpdateProfile"
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 const App = () => {
 
@@ -33,8 +34,8 @@ const App = () => {
         <Route path="/contact-us" element={<Contact />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/profile/update" element={<UpdateProfile />} />
+        <Route path="/profile" element={<ProtectedRoute element={<Profile />}/>} />
+        <Route path="/profile/update" element={<ProtectedRoute element={ <UpdateProfile />} />} />
       </Routes>
     </BrowserRouter>
   );
