@@ -7,8 +7,11 @@ import { logout } from "../features/user/userSlice";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [profileDropDownOpen, setProfileDropDownOpen] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState("");
   const { isAuthenticated, user } = useSelector((state) => state.user);
+  const { cartItems } = useSelector((state) => state.cart);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -96,9 +99,12 @@ const Navbar = () => {
             className="relative text-gray-700 hover:text-black transition"
           >
             <ShoppingCart />
-            <span className="absolute -top-2 -right-2 bg-black text-white text-xs font-semibold min-w-5 h-5 rounded-full flex items-center justify-center">
-              6
-            </span>
+
+            {cartItems.length > 0 &&
+              <span className="absolute -top-2 -right-2 bg-black text-white text-xs font-semibold min-w-5 h-5 rounded-full flex items-center justify-center">
+                {cartItems.length}
+              </span>
+            }
           </Link>
 
           {/*Registration*/}

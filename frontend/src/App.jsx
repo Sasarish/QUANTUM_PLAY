@@ -15,6 +15,7 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 import UpdatePassword from "./User/UpdatePassword";
 import ForgetPassword from "./User/ForgetPassword";
 import ResetPassword from "./User/ResetPassword";
+import Cart from "./cart/Cart";
 
 const App = () => {
 
@@ -42,6 +43,7 @@ const App = () => {
         <Route path="/password/update" element={<ProtectedRoute element={<UpdatePassword />} />} />
         <Route path="/password/forget" element={<ForgetPassword />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
     </BrowserRouter>
   );

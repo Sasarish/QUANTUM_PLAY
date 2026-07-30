@@ -9,11 +9,17 @@ import { useParams } from 'react-router-dom';
 import { getProductDetails, removeErrors } from '../features/products/productSlice';
 import toast from 'react-hot-toast';
 import { calculateDiscount, formatDate } from '../utils/formatter';
+import { addToCartItem } from '../features/cart/cartSlice';
+import { removeSuccess } from '../features/user/userSlice';
 
 const ProductDetails = () => {
 
+    const [quantity, setQuantity] = useState(1);
     const [userRating, setUserRating] = useState(0);
+
     const { loading, error, product } = useSelector((state) => state.product);
+    const { loading: cartLoading, error: cartError, cart, success, message } = useSelector((state) => state.cart);
+
     const { id } = useParams();
     const dispatch = useDispatch();
 
@@ -30,7 +36,14 @@ const ProductDetails = () => {
         }
     })
 
-    //Handling loading dcrren
+    useEffect(() => {
+        if (success) {
+            toast.success(message, { position: "top-center", autoClose: 3000 });
+            dispatch(removeSuccess());
+        }
+    }, [dispatch, success, message]);
+
+    //Handling loading details
     if (loading || !product) {
         return (
             <div className='min-h-screen bg-gray-50'>
@@ -40,6 +53,31 @@ const ProductDetails = () => {
             </div>
         );
     }
+
+    //Handling add products to cart
+    const addToCartHandler = () => {
+        dispatch(addToCartItem({ id, quantity }));
+    }
+
+    //Quantity increase
+    const increaseQuantity = () => {
+        if (product.stock <= quantity) {
+            toast.error("Cannot exceed available stock", { position: "top-center", autoClose: 3000 });
+            dispatch(removeErrors());
+            return;
+        }
+        setQuantity(quantity + 1);
+    };
+
+    //Qunatity decrease
+    const decreaseQuantity = () => {
+        if (quantity <= 1) {
+            toast.error("Quantity cannot be less than 1", { position: "top-center", autoClose: 3000 });
+            dispatch(removeErrors());
+            return
+        }
+        setQuantity(quantity - 1);
+    };
 
     const imageUrl = product.image?.[0]?.url || "/placeholder.png";
 
@@ -93,13 +131,31 @@ const ProductDetails = () => {
                             {product.stock > 0 && (
                                 <div className='flex flex-wrap items-center gap-4'>
                                     <div className='flex items-center border-2 border-gray-100 rounded-xl bg-white overflow-hidden'>
-                                        <button className='p-4 hover:bg-gray-50 hover:text-amber-600 transition-colors'><Minus size={18} /></button>
-                                        <span className='w-10 text-center font-bold text-gray-800'>1</span>
-                                        <button className='p-4 hover:bg-gray-50 hover:text-amber-600 transition-colors'><Plus size={18} /></button>
+                                        <button
+                                            className='p-4 hover:bg-gray-50 hover:text-amber-600 transition-colors'
+                                            onClick={decreaseQuantity}
+                                        >
+                                            <Minus size={18} />
+                                        </button>
+                                        <span className='w-10 text-center font-bold text-gray-800'>{quantity}</span>
+                                        <button
+                                            className='p-4 hover:bg-gray-50 hover:text-amber-600 transition-colors'
+                                            onClick={increaseQuantity}
+                                        >
+                                            <Plus size={18} />
+                                        </button>
                                     </div>
 
-                                    <button className='flex-1 bg-slate-900 hover:bg-black text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-100 active:scale-95'>
-                                        <ShoppingCart /> Add to Cart
+                                    <button
+                                        className={`flex-1 bg-slate-900 hover:bg-black text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-gray-100 active:scale-95 ${cartLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                                        onClick={addToCartHandler}
+                                        disabled={cartLoading}
+                                    >
+                                        {cartLoading ? ("Adding...") : (
+                                            <>
+                                                <ShoppingCart /> Add to Cart
+                                            </>
+                                        )}
                                     </button>
                                 </div>
                             )}
