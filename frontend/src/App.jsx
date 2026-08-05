@@ -16,17 +16,32 @@ import UpdatePassword from "./User/UpdatePassword";
 import ForgetPassword from "./User/ForgetPassword";
 import ResetPassword from "./User/ResetPassword";
 import Cart from "./cart/Cart";
+import { getCart, resetCartState } from "./features/cart/cartSlice";   
+import Shipping from "./order/Shipping";                               
+import ConfirmOrder from "./order/ConfirmOrder";                       
+import OrderSuccess from "./order/OrderSuccess";                       
+import MyOrders from "./order/MyOrders";                               
+import OrderDetails from "./order/OrderDetails";                       
+import AdminOrders from "./admin/AdminOrders";                         
 
 const App = () => {
-
-  //Getting user details after login
-  const { isAuthenticated, user } = useSelector((state) => state.user);
+  const { isAuthenticated } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(loadUser());
     };
   }, [dispatch]);
+
+  //keep cart in sync with login state
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(getCart());
+    } else {
+      dispatch(resetCartState());
+    }
+  }, [dispatch, isAuthenticated]);
 
   return (
     <BrowserRouter>
@@ -43,7 +58,15 @@ const App = () => {
         <Route path="/password/update" element={<ProtectedRoute element={<UpdatePassword />} />} />
         <Route path="/password/forget" element={<ForgetPassword />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
-        <Route path="/cart" element={<Cart />} />
+        <Route path="/cart" element={<ProtectedRoute element={<Cart />} />} />
+
+        {/* order flow */}
+        <Route path="/shipping" element={<ProtectedRoute element={<Shipping />} />} />
+        <Route path="/order/confirm" element={<ProtectedRoute element={<ConfirmOrder />} />} />
+        <Route path="/order/success" element={<ProtectedRoute element={<OrderSuccess />} />} />
+        <Route path="/orders" element={<ProtectedRoute element={<MyOrders />} />} />
+        <Route path="/order/:id" element={<ProtectedRoute element={<OrderDetails />} />} />
+        <Route path="/admin/orders" element={<ProtectedRoute element={<AdminOrders />} adminOnly={true} />} />
       </Routes>
     </BrowserRouter>
   );

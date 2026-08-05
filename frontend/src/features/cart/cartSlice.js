@@ -1,88 +1,108 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import axios from "axios"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
-//Adding products to cart
+// Fetch the logged-in user's cart from the backend
+export const getCart = createAsyncThunk("cart/getCart", async (_, { rejectWithValue }) => {
+    try {
+        const { data } = await axios.get("/api/v1/cart");
+        return data.cartItems;
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || "Could not load cart");
+    }
+});
+
+// Add and update item quantity in cart
 export const addToCartItem = createAsyncThunk("cart/addToCart", async ({ id, quantity }, { rejectWithValue }) => {
     try {
-        const { data } = await axios.get(`/api/v1/product/${id}`);
-        return {
-            product: data.product._id,
-            name: data.product.name,
-            price: data.product.price,
-            image: data.product.image[0].url,
-            stock: data.product.stock,
-            quantity,
-        }
-
+        const { data } = await axios.post("/api/v1/cart", { id, quantity });
+        return data.cartItems;
     } catch (error) {
-        return rejectWithValue(error.response?.data || "An error Occurred while add to cart");
+        return rejectWithValue(error.response?.data?.message || "An error occurred while adding to cart");
     }
-})
+});
+
+// Remove one item
+export const removeItemFromCart = createAsyncThunk("cart/removeItem", async (id, { rejectWithValue }) => {
+    try {
+        const { data } = await axios.delete(`/api/v1/cart/${id}`);
+        return data.cartItems;
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || "Could not remove item");
+    }
+});
+
+// Clear cart (used after placing an order)
+export const clearCartItems = createAsyncThunk("cart/clearCart", async (_, { rejectWithValue }) => {
+    try {
+        const { data } = await axios.delete("/api/v1/cart");
+        return data.cartItems;
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || "Could not clear cart");
+    }
+});
 
 const initialState = {
-    cartItems: JSON.parse(localStorage.getItem("cartItems")) || [],
+    cartItems: [],
     loading: false,
     error: null,
-    success: false,
-    message: false,
+    message: null,
 };
 
 const cartSlice = createSlice({
     name: "cart",
     initialState,
     reducers: {
-        removeErrors: (state) => {
+        removeErrors: (state) => { state.error = null; },
+        removeMessage: (state) => { state.message = null; },
+        // called on logout — cart now lives in the DB, not localStorage
+        resetCartState: (state) => {
+            state.cartItems = [];
+            state.loading = false;
             state.error = null;
-        },
-
-        removeMessage: (state) => {
             state.message = null;
         },
-
-        clearCart: (state) => {
-            state.cartItems = [];
-            localStorage.removeItem("cartItems");
-        },
-        removeItemFromCart: (state, action) => {
-            state.cartItems = state.cartItems.filter((i) => i.product !== action.payload);
-            localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
-        }
     },
     extraReducers: (builder) => {
-
-        //Builder for addToCartItem function
         builder
+            .addCase(getCart.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getCart.fulfilled, (state, action) => {
+                state.loading = false;
+                state.cartItems = action.payload;
+            })
+            .addCase(getCart.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+
             .addCase(addToCartItem.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
             .addCase(addToCartItem.fulfilled, (state, action) => {
-                const item = action.payload;
-
-                //Handling the same products cart addition
-                const existingItem = state.cartItems.find((i) => i.product === item.product);
-
-                if (existingItem) {
-                    existingItem.quantity = item.quantity;
-                    state.message = `Updated ${item.name} quantity in the cart`;
-                }
-                else {
-                    state.cartItems.push(item);
-                    state.message = `${action.payload.name} added to cart`;
-                }
-
                 state.loading = false;
-                state.error = null;
-                state.success = true;
-                //Saving cart item details in local storage
-                localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+                state.cartItems = action.payload;
+                state.message = "Cart updated";
             })
             .addCase(addToCartItem.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload || "Something went wrong";
+                state.error = action.payload;
             })
+
+            .addCase(removeItemFromCart.fulfilled, (state, action) => {
+                state.cartItems = action.payload;
+                state.message = "Item removed from cart";
+            })
+            .addCase(removeItemFromCart.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(clearCartItems.fulfilled, (state) => {
+                state.cartItems = [];
+            });
     },
 });
 
-export const { removeErrors, removeMessage, removeItemFromCart, clearCart } = cartSlice.actions;
+export const { removeErrors, removeMessage, resetCartState } = cartSlice.actions;
 export default cartSlice.reducer;

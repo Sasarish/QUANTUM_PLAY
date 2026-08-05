@@ -2,6 +2,7 @@ import express from "express";
 import product from "./routes/productRoutes.js";
 import user from "./routes/userRoutes.js";
 import order from "./routes/orderRoutes.js";
+import cart from "./routes/cartRoutes.js";
 import errorHandler from "./middleware/error.js";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
@@ -16,6 +17,7 @@ app.use(fileUpload());
 app.use("/api/v1/", product);
 app.use("/api/v1/", user);
 app.use("/api/v1/", order);
+app.use("/api/v1/", cart);
 
 app.use(errorHandler);
 

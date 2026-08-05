@@ -1,6 +1,7 @@
 import HandleError from "../helper/handleError.js";
 import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
+import Cart from "../models/cartModel.js";
 
 //Creating new order
 export const createNewOrder = async (req, res, next) => {
@@ -16,7 +17,11 @@ export const createNewOrder = async (req, res, next) => {
         paidAt: Date.now(),
         user: req.user._id,
     });
-    res.status(201).json({ success: true, order, });
+
+    // Empty the user's cart now that the order exists
+    await Cart.findOneAndUpdate({ user: req.user._id }, { items: [] });
+
+    res.status(201).json({ success: true, order });
 };
 
 //Get single order details
