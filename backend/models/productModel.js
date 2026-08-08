@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { type } from "os";
 
 //products model configure and conditions
 const productSchema = new mongoose.Schema({
@@ -14,12 +13,12 @@ const productSchema = new mongoose.Schema({
     mrp: {
         type: Number,
         required: [true, "Please enter product mrp"],
-        maxLength: [7, "Price cannot exceed 7 digit"]
+        max: [9999999, "Price cannot exceed 7 digits"]
     },
     price: {
         type: Number,
         required: [true, "Please enter product price"],
-        maxLength: [7, "Price cannot exceed 7 digit"]
+        max: [9999999, "Price cannot exceed 7 digits"]
     },
     ratings: {
         type: Number,

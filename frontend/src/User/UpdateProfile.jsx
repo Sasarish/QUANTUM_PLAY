@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from "../Components/Navbar"
 import { useSelector, useDispatch } from "react-redux"
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { loadUser, removeErrors, removeSuccess, updateProfile } from '../features/user/userSlice';
 import toast from "react-hot-toast";
 
@@ -15,9 +15,8 @@ const UpdateProfile = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [avatar, setAvatar] = useState("");
-    const [preview, setPreview] = useState("../src/assets/profile.jpg");
+    const [preview, setPreview] = useState("/placeholder.png");
 
-    //assigning current user details
     useEffect(() => {
         if (user) {
             setName(user.name);
@@ -39,9 +38,8 @@ const UpdateProfile = () => {
             navigate("/profile");
             dispatch(removeSuccess())
         }
-    }, [user, dispatch, error, success]);
+    }, [user, dispatch, error, success, navigate]);
 
-    //assigning selected photo to statevariable avatar, preview
     const handleChange = (e) => {
         const reader = new FileReader();
         reader.onload = () => {
@@ -53,7 +51,6 @@ const UpdateProfile = () => {
         reader.readAsDataURL(e.target.files[0]);
     };
 
-    //submiting updated user details to db
     const updateProfileSubmit = (e) => {
         e.preventDefault();
         const myForm = new FormData();
@@ -63,7 +60,6 @@ const UpdateProfile = () => {
             myForm.set("avatar", avatar);
         }
 
-        //calling updateProfile function from userslice
         dispatch(updateProfile(myForm))
     }
 
@@ -126,7 +122,7 @@ const UpdateProfile = () => {
                             </div>
 
                             <div className='mt-1'>
-                                <label htmlFor="name"
+                                <label htmlFor="email"
                                     className='block text-sm font-semibold text-gray-700 ml-1'
                                 >
                                     Email address
@@ -149,7 +145,7 @@ const UpdateProfile = () => {
                                     type='submit'
                                     className='w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-md shadow-gray-200 text-sm font-bold text-white bg-gray-800 hover:bg-black active:scale-[0.98]'
                                 >
-                                    Update Details
+                                    {loading ? "Please wait" : "Update Details"}
                                 </button>
                             </div>
 

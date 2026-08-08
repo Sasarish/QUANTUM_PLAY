@@ -12,17 +12,15 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { error, loading, success, isAuthenticated } = useSelector((state) => state.user);
+  const { error, loading, success } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  //calling Login function
   const loginSubmit = (e) => {
     e.preventDefault();
     dispatch(login({ email, password }));
   }
 
-  //Throwing error message through toast
   useEffect(() => {
     if (error) {
       toast.error(error, { position: "top-center", autoClose: 3000 });
@@ -30,14 +28,13 @@ const Login = () => {
     }
   }, [dispatch, error]);
 
-  //Throwing success message through toast
   useEffect(() => {
     if (success) {
       toast.success("Login successfully", { position: "top-center", autoClose: 3000 });
       dispatch(removeSuccess());
       navigate("/")
     }
-  }, [dispatch, success])
+  }, [dispatch, success, navigate])
 
   return (
     <div className="bg-gray-50 flex items-center justify-center min-h-screen">
@@ -79,7 +76,7 @@ const Login = () => {
 
 
           <button className="w-full bg-slate-900 hover:bg-black text-white font-semibold py-3 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-[0.98]">
-            Login
+            {loading ? "Please wait" : "Login"}
           </button>
 
           <p className="text-center text-sm text-gray-600 ">

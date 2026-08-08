@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from "../Components/Navbar"
 import toast from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { removeErrors, removeSuccess, updatePassword } from '../features/user/userSlice';
 
 const UpdatePassword = () => {
@@ -16,21 +16,18 @@ const UpdatePassword = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
 
     useEffect(() => {
-        //Throwing error message through toast
         if (error) {
             toast.error(error, { position: "top-center", autoClose: 3000 });
             dispatch(removeErrors())
         }
 
-        //Throwing error message through toast
         if (success) {
-            toast.success("Password updated successfully", { position: "top-center", autoClose:3000 });
+            toast.success("Password updated successfully", { position: "top-center", autoClose: 3000 });
             dispatch(removeSuccess());
             navigate("/profile");
         }
-    })
+    }, [dispatch, error, success, navigate]);
 
-    //Handling password change
     const updatePasswordSubmit = (e) => {
         e.preventDefault();
 
@@ -39,7 +36,6 @@ const UpdatePassword = () => {
             return;
         }
 
-        //calling updatePassword function from userslice
         dispatch(updatePassword({ oldPassword, newPassword, confirmPassword }));
     }
 
@@ -103,9 +99,9 @@ const UpdatePassword = () => {
 
                             <div>
                                 <button
-                                    className='w-full bg-gray-900 text-white py-3 px-4 rounded hover:bg-black active:scale-[0.98'
+                                    className='w-full bg-gray-900 text-white py-3 px-4 rounded hover:bg-black active:scale-[0.98]'
                                 >
-                                    Change Password
+                                    {loading ? "Please wait" : "Change Password"}
                                 </button>
                             </div>
 

@@ -21,7 +21,6 @@ const Register = () => {
   const navigate = useNavigate();
   const { success, error, loading } = useSelector((state) => state.user);
 
-  //Asigning form values to user
   const handleChange = (e) => {
     if (e.target.name == "avatar") {
       const reader = new FileReader();
@@ -37,11 +36,10 @@ const Register = () => {
     }
   }
 
-  //Register user details to db
   const registerNow = (e) => {
     e.preventDefault();
-    if (!name || !email || !password) {
-      toast.error("Please fill out all the required fields", {
+    if (!name || !email || !password || !avatar) {
+      toast.error("Please fill out all the required fields, including a profile picture", {
         position: "top-center", autoClose: 3000
       });
       return;
@@ -53,11 +51,9 @@ const Register = () => {
     myForm.set("password", password);
     myForm.set("avatar", avatar);
 
-    //Calling register funtion from userSlice
     disPatch(register(myForm));
   }
 
-  //Throwing error message through toast
   useEffect(() => {
     if (error) {
       toast.error(error, { position: "top-center", autoClose: 3000 });
@@ -65,14 +61,13 @@ const Register = () => {
     }
   }, [disPatch, error]);
 
-  //Throwing success message through toast
   useEffect(() => {
     if (success) {
       toast.success("Registration successful", { position: "top-center", autoClose: 3000 });
       disPatch(removeSuccess());
       navigate("/login")
     }
-  }, [disPatch, success])
+  }, [disPatch, success, navigate])
 
   return (
 

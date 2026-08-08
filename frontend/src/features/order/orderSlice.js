@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-//Create new Order
 export const createNewOrder = createAsyncThunk("order/createNewOrder", async (order, { rejectWithValue }) => {
     try {
         const { data } = await axios.post("/api/v1/new/order", order);
@@ -11,7 +10,6 @@ export const createNewOrder = createAsyncThunk("order/createNewOrder", async (or
     }
 });
 
-//Getting user orders
 export const myOrders = createAsyncThunk("order/myOrders", async (_, { rejectWithValue }) => {
     try {
         const { data } = await axios.get("/api/v1/orders/user");
@@ -21,7 +19,6 @@ export const myOrders = createAsyncThunk("order/myOrders", async (_, { rejectWit
     }
 });
 
-//getting single order
 export const getOrderDetails = createAsyncThunk("order/getOrderDetails", async (id, { rejectWithValue }) => {
     try {
         const { data } = await axios.get(`/api/v1/order/${id}`);
@@ -31,7 +28,6 @@ export const getOrderDetails = createAsyncThunk("order/getOrderDetails", async (
     }
 });
 
-//admin getting all orders
 export const getAllOrdersByAdmin = createAsyncThunk("order/getAllOrdersByAdmin", async (_, { rejectWithValue }) => {
     try {
         const { data } = await axios.get("/api/v1/admin/orders");
@@ -41,7 +37,6 @@ export const getAllOrdersByAdmin = createAsyncThunk("order/getAllOrdersByAdmin",
     }
 });
 
-//Admin update order status
 export const updateOrder = createAsyncThunk("order/updateOrder", async ({ id, status }, { rejectWithValue }) => {
     try {
         const { data } = await axios.put(`/api/v1/admin/order/${id}`, { status });
@@ -51,7 +46,6 @@ export const updateOrder = createAsyncThunk("order/updateOrder", async ({ id, st
     }
 });
 
-//admin delete order
 export const deleteOrder = createAsyncThunk("order/deleteOrder", async (id, { rejectWithValue }) => {
     try {
         const { data } = await axios.delete(`/api/v1/admin/order/${id}`);
@@ -91,46 +85,20 @@ const orderSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(createNewOrder.pending, (state) => { state.loading = true; state.error = null; })
-            .addCase(createNewOrder.fulfilled, (state, action) => {
-                state.loading = false;
-                state.success = true;
-                state.order = action.payload;
-            })
-            .addCase(createNewOrder.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
+            .addCase(createNewOrder.fulfilled, (state, action) => { state.loading = false; state.success = true; state.order = action.payload; })
+            .addCase(createNewOrder.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
 
             .addCase(myOrders.pending, (state) => { state.loading = true; })
-            .addCase(myOrders.fulfilled, (state, action) => {
-                state.loading = false;
-                state.orders = action.payload;
-            })
-            .addCase(myOrders.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
+            .addCase(myOrders.fulfilled, (state, action) => { state.loading = false; state.orders = action.payload; })
+            .addCase(myOrders.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
 
             .addCase(getOrderDetails.pending, (state) => { state.loading = true; })
-            .addCase(getOrderDetails.fulfilled, (state, action) => {
-                state.loading = false;
-                state.order = action.payload;
-            })
-            .addCase(getOrderDetails.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
+            .addCase(getOrderDetails.fulfilled, (state, action) => { state.loading = false; state.order = action.payload; })
+            .addCase(getOrderDetails.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
 
             .addCase(getAllOrdersByAdmin.pending, (state) => { state.loading = true; })
-            .addCase(getAllOrdersByAdmin.fulfilled, (state, action) => {
-                state.loading = false;
-                state.orders = action.payload.orders;
-                state.totalAmount = action.payload.totalAmount;
-            })
-            .addCase(getAllOrdersByAdmin.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
+            .addCase(getAllOrdersByAdmin.fulfilled, (state, action) => { state.loading = false; state.orders = action.payload.orders; state.totalAmount = action.payload.totalAmount; })
+            .addCase(getAllOrdersByAdmin.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
 
             .addCase(updateOrder.fulfilled, (state) => { state.isUpdated = true; })
             .addCase(updateOrder.rejected, (state, action) => { state.error = action.payload; })

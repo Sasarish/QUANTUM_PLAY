@@ -24,7 +24,7 @@ export const registerUser = async (req, res, next) => {
     const myCloud = await cloudinary.uploader.upload(avatar, {
         folder: "avatars",
         width: 150,
-        crop: "scale,"
+        crop: "scale"
     })
 
     const user = await User.create({
@@ -195,7 +195,7 @@ export const updateProfile = async (req, res, next) => {
         const myCloud = await cloudinary.uploader.upload(avatar, {
             folder: "avatars",
             width: 150,
-            crop: "scale,"
+            crop: "scale"
         });
 
         updatedUserDetails.avatar = {
@@ -213,7 +213,7 @@ export const updateProfile = async (req, res, next) => {
 }
 
 //Get all users
-export const getUsers = async (req, res) => {
+export const getUsers = async (req, res, next) => {
     const users = await User.find();
     res.status(200).json({
         success: true,
@@ -235,13 +235,13 @@ export const getSingleUser = async (req, res, next) => {
 };
 
 //update user role
-export const updateUserRole = async (req, res) => {
+export const updateUserRole = async (req, res, next) => {
     const { role } = req.body;
     const id = req.params.id;
     const updatedRole = { role };
     const user = await User.findByIdAndUpdate(id, updatedRole, { new: true });
     if (!user) {
-        return next(HandleError("User doesn't exist", 400));
+        return next(new HandleError("User doesn't exist", 400));
     }
     res.status(200).json({
         success: true,
@@ -254,7 +254,7 @@ export const deleteUser = async (req, res, next) => {
     const id = req.params.id;
     const user = await User.findById(id);
     if (!user) {
-        return next(HandleError("User doesn't exist", 400));
+        return next(new HandleError("User doesn't exist", 400));
     }
     await User.findByIdAndDelete(id);
     res.status(200).json({

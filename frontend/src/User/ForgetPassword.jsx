@@ -13,7 +13,6 @@ const ForgetPassword = () => {
 
     const [email, setEmail] = useState("");
 
-    //Handling error and success
     useEffect(() => {
         if (error) {
             toast.error(error, { position: "top-center", autoClose: 3000 });
@@ -25,7 +24,6 @@ const ForgetPassword = () => {
         }
     }, [dispatch, error, success]);
 
-    //Handling reset password submission
     const forgetPasswordSubmit = (e) => {
         e.preventDefault();
         dispatch(forgetPassword({ email }));

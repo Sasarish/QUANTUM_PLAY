@@ -9,8 +9,19 @@ export const verifyUser = async (req, res, next) => {
     if (!token) {
         return next(new HandleError("Access denied please login to access", 401));
     }
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.user = await User.findById(decodedData.id);
+
+    let decodedData;
+    try {
+        decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    } catch (error) {
+        return next(new HandleError("Session expired or invalid, please login again", 401));
+    }
+
+    const user = await User.findById(decodedData.id);
+    if (!user) {
+        return next(new HandleError("Access denied please login to access", 401));
+    }
+    req.user = user;
     next();
 };
 

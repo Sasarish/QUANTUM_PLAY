@@ -27,9 +27,8 @@ const ResetPassword = () => {
             dispatch(removeSuccess());
             navigate("/login")
         }
-    },[dispatch, error, success])
+    }, [dispatch, error, success, navigate])
 
-    //Handling the resetPassword
     const resetPasswordSubmit = (e) => {
         e.preventDefault()
 
@@ -43,7 +42,6 @@ const ResetPassword = () => {
             confirmPassword,
         }
 
-        //calling resetpassword function from userslice
         dispatch(resetPassword({ token, userData: data }));
     }
 
@@ -99,7 +97,7 @@ const ResetPassword = () => {
                             <button
                                 className='w-full bg-gray-800 hover:bg-black text-white font-semibold py-3 rounded-xl shadow-lg shadow-gray-200 transition-all active:scale-[0.98]'
                             >
-                                Reset Password
+                                {loading ? "Please wait" : "Reset Password"}
                             </button>
 
                         </form>

@@ -30,6 +30,9 @@ export const getOrderDetails = async (req, res, next) => {
     if (!order) {
         return next(new HandleError("Order not found", 404));
     }
+    if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== "admin") {
+        return next(new HandleError("Not authorized to view this order", 403));
+    }
     res.status(200).json({
         success: true,
         order,
@@ -92,8 +95,10 @@ export const updateOrderStatus = async (req, res, next) => {
         return next(new HandleError("This order has been already delivered", 404));
     };
 
-    //Update stock
-    await Promise.all(order.orderItems.map((item) => updateQuantity(item.product, item.quantity)));
+    //Only deduct stock once — the first time the order leaves "processing"
+    if (order.orderStatus === 'processing' && req.body.status !== 'processing') {
+        await Promise.all(order.orderItems.map((item) => updateQuantity(item.product, item.quantity)));
+    }
 
     order.orderStatus = req.body.status;
     if (order.orderStatus === 'Delivered') {

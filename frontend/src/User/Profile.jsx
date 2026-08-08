@@ -1,19 +1,18 @@
 import React, { useEffect } from 'react'
 import Navbar from "../Components/Navbar"
 import { Link, useNavigate } from 'react-router-dom'
-import { useSelector, useDispatch } from "react-redux"
+import { useSelector } from "react-redux"
 
 const Profile = () => {
 
     const { user, isAuthenticated, loading } = useSelector((state) => state.user);
     const navigate = useNavigate();
 
-    //Redirecting to login page if user logout
     useEffect(() => {
         if (isAuthenticated === false) {
             navigate("/login")
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, navigate]);
 
     return (
         <>

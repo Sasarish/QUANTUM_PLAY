@@ -43,7 +43,7 @@ const orderSchema = new mongoose.Schema({
             },
             image: {
                 type: String,
-                requires: true,
+                required: true,
             },
             product: {
                 type: mongoose.Schema.ObjectId,
@@ -83,7 +83,7 @@ const orderSchema = new mongoose.Schema({
     },
     taxPrice: {
         type: Number,
-        requires: true,
+        required: true,
         default: 0,
     },
     shippingPrice: {
@@ -97,7 +97,7 @@ const orderSchema = new mongoose.Schema({
         default: 0,
     },
     deliveredAt: Date,
-    
+
     createdAt: {
         type: Date,
         default: Date.now,
@@ -105,4 +105,4 @@ const orderSchema = new mongoose.Schema({
 
 });
 
-export default mongoose.model("Order", orderSchema); 
+export default mongoose.model("Order", orderSchema);

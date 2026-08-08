@@ -3,17 +3,17 @@ import { PageTitle } from "../Components/PageTitle"
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { useDispatch, useSelector } from 'react-redux';
-import { getProduct, removeErrors } from '../features/products/productSlice';
+import { getProduct, getCategories, removeErrors } from '../features/products/productSlice';
 import toast from 'react-hot-toast';
 import Loader from '../Components/Loader';
 import Product from "../Components/Product"
 import Pagination from '../Components/Pagination';
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export const Products = () => {
 
     const navigate = useNavigate();
-    const { products, productCount, loading, error, resultPerPage } = useSelector((state) => state.product);
+    const { products, productCount, loading, error, categories } = useSelector((state) => state.product);
     const dispatch = useDispatch();
 
     const [searchParams] = useSearchParams();
@@ -21,7 +21,6 @@ export const Products = () => {
     const category = searchParams.get("category") || "";
     const pageFromURL = parseInt(searchParams.get("page"), 10) || 1;
     const [currentPage, setCurrentPage] = useState(pageFromURL);
-    const totalPages = Math.ceil(productCount / (resultPerPage || 6));
 
     //Handling pages
     const handlePageChange = (pageNumber) => {
@@ -56,13 +55,18 @@ export const Products = () => {
         dispatch(getProduct({ keyword, page: currentPage, category }));
     }, [dispatch, keyword, currentPage, category]);
 
+    //Fetching the live category list once
+    useEffect(() => {
+        dispatch(getCategories());
+    }, [dispatch]);
+
 
     useEffect(() => {
         if (error) {
-            toast.error(error.message);
+            toast.error(error.message || error, { position: "top-center", autoClose: 3000 });
             dispatch(removeErrors());
         }
-    })
+    }, [error, dispatch]);
 
     return loading ? (
         <Loader />
@@ -80,10 +84,10 @@ export const Products = () => {
                             <div className='bg-white p-6 rounded-lg shadow-sm sticky top-24'>
                                 <h3 className='text-xl font-semibold mb-4 text-gray-800 border-b border-slate-200 pb-2'>Categories</h3>
                                 <ul className='space-y-2'>
-                                    {["All", "PS4 Games", "PS5 Games", "Consoles", "Controllers", "Gaming Chairs", "Gaming Headsets", "Gaming Monitors"].map((cat) => (
+                                    {["All", ...categories].map((cat) => (
                                         <li key={cat}>
                                             <button
-                                                className='text-gray-600 hover:text-black transition-colors'
+                                                className={`text-gray-600 hover:text-black transition-colors ${category === cat || (cat === "All" && !category) ? "font-bold text-black" : ""}`}
                                                 onClick={() => handleCategory(cat)}
                                             >
                                                 {cat}
@@ -115,7 +119,7 @@ export const Products = () => {
 
                     {/*Pagination section */}
                     <div className='mt-12 flex justify-center'>
-                        <Pagination currentPage={currentPage} onPageChange={handlePageChange} totalPages={totalPages} />
+                        <Pagination currentPage={currentPage} onPageChange={handlePageChange} />
                     </div>
 
                 </main>

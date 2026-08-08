@@ -1,4 +1,5 @@
 import Product from "../models/productModel.js";
+import Order from "../models/orderModel.js";
 import errorHandler from "../helper/handleError.js";
 import APIHelper from "../helper/APIHelper.js";
 import HandleError from "../helper/handleError.js";
@@ -88,6 +89,16 @@ export const getSingleProduct = async (req, res, next) => {
 //Product reviews
 export const createProductReview = async (req, res, next) => {
   const { rating, comment, productId } = req.body;
+
+  const hasDeliveredOrder = await Order.exists({
+    user: req.user._id,
+    orderStatus: "Delivered",
+    "orderItems.product": productId,
+  });
+  if (!hasDeliveredOrder) {
+    return next(new HandleError("You can only review products from your delivered orders", 403));
+  }
+
   const review = {
     user: req.user._id,
     name: req.user.name,
@@ -174,4 +185,26 @@ export const adminDeleteReview = async (req, res, next) => {
     success: true,
     message: "Review deleted successfully"
   })
+};
+
+//Get distinct categories actually present in the product collection
+export const getProductCategories = async (req, res, next) => {
+  const categories = await Product.distinct("category");
+  res.status(200).json({
+    success: true,
+    categories,
+  });
+};
+
+//Check whether the logged-in user is eligible to review this product
+export const checkCanReview = async (req, res, next) => {
+  const hasDeliveredOrder = await Order.exists({
+    user: req.user._id,
+    orderStatus: "Delivered",
+    "orderItems.product": req.params.productId,
+  });
+  res.status(200).json({
+    success: true,
+    canReview: Boolean(hasDeliveredOrder),
+  });
 };

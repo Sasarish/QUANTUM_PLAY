@@ -16,13 +16,13 @@ import UpdatePassword from "./User/UpdatePassword";
 import ForgetPassword from "./User/ForgetPassword";
 import ResetPassword from "./User/ResetPassword";
 import Cart from "./cart/Cart";
-import { getCart, resetCartState } from "./features/cart/cartSlice";   
-import Shipping from "./order/Shipping";                               
-import ConfirmOrder from "./order/ConfirmOrder";                       
-import OrderSuccess from "./order/OrderSuccess";                       
-import MyOrders from "./order/MyOrders";                               
-import OrderDetails from "./order/OrderDetails";                       
-import AdminOrders from "./admin/AdminOrders";                         
+import { getCart, resetCartState } from "./features/cart/cartSlice";
+import Shipping from "./order/Shipping";
+import ConfirmOrder from "./order/ConfirmOrder";
+import OrderSuccess from "./order/OrderSuccess";
+import MyOrders from "./order/MyOrders";
+import OrderDetails from "./order/OrderDetails";
+import AdminOrders from "./admin/AdminOrders";
 
 const App = () => {
   const { isAuthenticated } = useSelector((state) => state.user);

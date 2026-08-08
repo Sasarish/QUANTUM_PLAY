@@ -1,37 +1,31 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Minus, Plus, Trash2 } from 'lucide-react'
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import toast from 'react-hot-toast';
 import { addToCartItem, removeErrors, removeItemFromCart } from '../features/cart/cartSlice';
 
 const CartItem = ({ item }) => {
 
-    const [quantity, setQuantity] = useState(item.quantity);
     const dispatch = useDispatch();
 
     //Increasing product quantity
     const increaseQuantity = () => {
-        if (item.stock <= quantity) {
+        if (item.stock <= item.quantity) {
             toast.error("Cannot exceed available stock!", { position: "top-center", autoClose: 3000, });
             dispatch(removeErrors());
             return;
         }
-        const newQty = quantity + 1;
-        setQuantity(newQty);
-        dispatch(addToCartItem({ id: item.product, quantity: newQty }))
-
+        dispatch(addToCartItem({ id: item.product, quantity: item.quantity + 1 }))
     };
 
     //Decreasing product quantity
     const decreaseQuantity = () => {
-        if (quantity <= 1) {
+        if (item.quantity <= 1) {
             toast.error("Quantity cannot be less than 1", { position: "top-center", autoClose: 3000 });
             dispatch(removeErrors());
             return;
         }
-        const newQty = quantity - 1;
-        setQuantity(newQty);
-        dispatch(addToCartItem({ id: item.product, quantity: newQty }))
+        dispatch(addToCartItem({ id: item.product, quantity: item.quantity - 1 }))
     };
 
     return (
@@ -69,7 +63,7 @@ const CartItem = ({ item }) => {
 
             <button
                 className='text-red-500 hover:text-red-700 transition-colors'
-                onClick={() =>dispatch(removeItemFromCart(item.product))}
+                onClick={() => dispatch(removeItemFromCart(item.product))}
             >
                 <Trash2 />
             </button>

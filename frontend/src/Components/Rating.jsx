@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react'
 //Handling product rating with 5 star
 const Rating = ({ value = 0, onRatingChange, disabled = false, showValue = true }) => {
 
-    const [rating, setRating] = useState(value/2);
+    const [rating, setRating] = useState(value);
     const [hover, setHover] = useState(0);
 
     useEffect(() => {
-        setRating(value/2);
+        setRating(value);
     }, [value]);
 
     const handleClick = (star) => {

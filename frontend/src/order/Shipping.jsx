@@ -21,7 +21,7 @@ const Shipping = () => {
     const submitHandler = (e) => {
         e.preventDefault();
         if (cartItems.length === 0) { navigate("/cart"); return; }
-        dispatch(saveShippingInfo({ address, city, state, country, pinCode, phoneNo }));
+        dispatch(saveShippingInfo({ address, city, country, pinCode, phoneNo, state }));
         navigate("/order/confirm");
     };
 

@@ -6,19 +6,20 @@ import Rating from '../Components/Rating';
 import { CalculatorIcon, Calendar, MessageSquare, Minus, PackageCheck, PackageX, Plus, ShoppingCart } from 'lucide-react';
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from 'react-router-dom';
-import { getProductDetails, removeErrors } from '../features/products/productSlice';
+import { getProductDetails, newReview, removeErrors, removeReviewSuccess, checkCanReview } from '../features/products/productSlice';
 import toast from 'react-hot-toast';
 import { calculateDiscount, formatDate } from '../utils/formatter';
-import { addToCartItem } from '../features/cart/cartSlice';
-import { removeSuccess } from '../features/user/userSlice';
+import { addToCartItem, removeMessage } from '../features/cart/cartSlice';
 
 const ProductDetails = () => {
 
     const [quantity, setQuantity] = useState(1);
     const [userRating, setUserRating] = useState(0);
+    const [comment, setComment] = useState("");
 
-    const { loading, error, product } = useSelector((state) => state.product);
-    const { loading: cartLoading, error: cartError, cart, success, message } = useSelector((state) => state.cart);
+    const { loading, error, product, reviewLoading, reviewSuccess, canReview } = useSelector((state) => state.product);
+    const { loading: cartLoading, error: cartError, message } = useSelector((state) => state.cart);
+    const { isAuthenticated } = useSelector((state) => state.user);
 
     const { id } = useParams();
     const dispatch = useDispatch();
@@ -30,18 +31,33 @@ const ProductDetails = () => {
     }, [dispatch, id]);
 
     useEffect(() => {
-        if (error) {
-            toast.error(error.message);
-            dispatch(removeErrors());
+        if (id && isAuthenticated) {
+            dispatch(checkCanReview(id));
         }
-    })
+    }, [dispatch, id, isAuthenticated]);
 
     useEffect(() => {
-        if (success) {
-            toast.success(message, { position: "top-center", autoClose: 3000 });
-            dispatch(removeSuccess());
+        if (error) {
+            toast.error(error.message || error, { position: "top-center", autoClose: 3000 });
+            dispatch(removeErrors());
         }
-    }, [dispatch, success, message]);
+    }, [dispatch, error]);
+
+    useEffect(() => {
+        if (message) {
+            toast.success(message, { position: "top-center", autoClose: 3000 });
+            dispatch(removeMessage());
+        }
+    }, [dispatch, message]);
+
+    useEffect(() => {
+        if (reviewSuccess) {
+            toast.success("Review submitted", { position: "top-center", autoClose: 3000 });
+            dispatch(removeReviewSuccess());
+            setUserRating(0);
+            setComment("");
+        }
+    }, [dispatch, reviewSuccess]);
 
     //Handling loading details
     if (loading || !product) {
@@ -77,6 +93,20 @@ const ProductDetails = () => {
             return
         }
         setQuantity(quantity - 1);
+    };
+
+    //Handling review submission
+    const reviewSubmitHandler = (e) => {
+        e.preventDefault();
+        if (userRating < 1) {
+            toast.error("Please select a star rating", { position: "top-center", autoClose: 3000 });
+            return;
+        }
+        if (!comment.trim()) {
+            toast.error("Please write a comment", { position: "top-center", autoClose: 3000 });
+            return;
+        }
+        dispatch(newReview({ rating: userRating, comment: comment.trim(), productId: id }));
     };
 
     const imageUrl = product.image?.[0]?.url || "/placeholder.png";
@@ -161,19 +191,29 @@ const ProductDetails = () => {
                             )}
                         </div>
 
-                        {/*Review Form*/}
-                        <form className='bg-slate-50 p-6 rounded-2xl border border-slate-100' >
-                            <h3 className='text-md font-bold mb-4 flex items-center gap-2 text-slate-800 uppercase tracking-tight'>
-                                <MessageSquare size={18} className='text-amber-500' />Share your feedback
-                            </h3>
-                            <div className='mb-4'>
-                                <Rating value={0} disabled={false} onRatingChange={(r) => setUserRating(r)} />
-                            </div>
-                            <textarea placeholder='How was the product quality and delivery?'
-                                className='w-full p-4 rounded-xl border-2 border-white focus:border-amber-400 focus:ring-0 outline-none min-h-24 text-sm bg-white shadow-sm transition-all'
-                            ></textarea>
-                            <button className='mt-4 w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-black transition-all shadow-lg shadow-slate-200'>Post Review</button>
-                        </form>
+                        {/*Review Form — only visible to logged-in customers with a delivered order for this product */}
+                        {isAuthenticated && canReview && (
+                            <form className='bg-slate-50 p-6 rounded-2xl border border-slate-100' onSubmit={reviewSubmitHandler}>
+                                <h3 className='text-md font-bold mb-4 flex items-center gap-2 text-slate-800 uppercase tracking-tight'>
+                                    <MessageSquare size={18} className='text-amber-500' />Share your feedback
+                                </h3>
+                                <div className='mb-4'>
+                                    <Rating value={userRating} disabled={false} onRatingChange={(r) => setUserRating(r)} showValue={false} />
+                                </div>
+                                <textarea placeholder='How was the product quality and delivery?'
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                    className='w-full p-4 rounded-xl border-2 border-white focus:border-amber-400 focus:ring-0 outline-none min-h-24 text-sm bg-white shadow-sm transition-all'
+                                ></textarea>
+                                <button
+                                    type='submit'
+                                    disabled={reviewLoading}
+                                    className='mt-4 w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-black transition-all shadow-lg shadow-slate-200 disabled:opacity-50'
+                                >
+                                    {reviewLoading ? "Posting..." : "Post Review"}
+                                </button>
+                            </form>
+                        )}
                     </div>
                 </div>
 
@@ -195,7 +235,7 @@ const ProductDetails = () => {
                                         <div>
                                             <h4 className='font-bold text-gray-900 text-lg'>{rev?.name}</h4>
                                             <div className='mt-1'>
-                                                <Rating value={rev?.rating} />
+                                                <Rating value={rev?.rating} disabled={true} showValue={false} />
                                             </div>
                                         </div>
                                     </div>
@@ -208,6 +248,10 @@ const ProductDetails = () => {
                             </div>
                         ))}
                     </div>
+
+                    {product?.reviews.length === 0 && (
+                        <p className='text-gray-500 text-center py-12'>No reviews yet. Be the first to share your feedback!</p>
+                    )}
                 </section>
 
 
@@ -219,4 +263,3 @@ const ProductDetails = () => {
 }
 
 export default ProductDetails
-

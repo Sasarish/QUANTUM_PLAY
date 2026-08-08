@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
@@ -6,7 +6,6 @@ import Rating from './Rating'
 import { addToCartItem } from '../features/cart/cartSlice'
 
 const Product = ({ product }) => {
-    const [rating, setRating] = useState(product.ratings || 0)
     const imageUrl = product.image?.[0]?.url || "/placeholder.png";
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -41,7 +40,7 @@ const Product = ({ product }) => {
             </Link>
             <div className='px-4 pb-4 space-y-2'>
                 <div className='flex items-center gap-2'>
-                    <Rating value={rating} onRatingChange={(e) => setRating(e)} />
+                    <Rating value={product.ratings} disabled={true} />
                     <span className='text-xs text-gray-500 font-semibold'>({product.numOfReviews} Reviews)</span>
                 </div>
                 <div className='flex items-center justify-between'>
