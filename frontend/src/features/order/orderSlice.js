@@ -10,6 +10,16 @@ export const createNewOrder = createAsyncThunk("order/createNewOrder", async (or
     }
 });
 
+export const createPaymentIntent = createAsyncThunk("order/createPaymentIntent", async (amount, { rejectWithValue }) => {
+    try {
+        const config = { headers: { "Content-Type": "application/json" } };
+        const { data } = await axios.post("/api/v1/payment/process", { amount }, config);
+        return data.clientSecret;
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || "Could not initiate payment");
+    }
+});
+
 export const myOrders = createAsyncThunk("order/myOrders", async (_, { rejectWithValue }) => {
     try {
         const { data } = await axios.get("/api/v1/orders/user");
@@ -67,6 +77,8 @@ const orderSlice = createSlice({
         isDeleted: false,
         isUpdated: false,
         shippingInfo: JSON.parse(sessionStorage.getItem("shippingInfo")) || {},
+        clientSecret: null,
+        paymentLoading: false,
     },
     reducers: {
         removeErrors: (state) => { state.error = null; },
@@ -76,6 +88,7 @@ const orderSlice = createSlice({
             state.success = false;
             state.isDeleted = false;
             state.isUpdated = false;
+            state.clientSecret = null;
         },
         saveShippingInfo: (state, action) => {
             state.shippingInfo = action.payload;
@@ -104,7 +117,11 @@ const orderSlice = createSlice({
             .addCase(updateOrder.rejected, (state, action) => { state.error = action.payload; })
 
             .addCase(deleteOrder.fulfilled, (state) => { state.isDeleted = true; })
-            .addCase(deleteOrder.rejected, (state, action) => { state.error = action.payload; });
+            .addCase(deleteOrder.rejected, (state, action) => { state.error = action.payload; })
+
+            .addCase(createPaymentIntent.pending, (state) => { state.paymentLoading = true; state.error = null; })
+            .addCase(createPaymentIntent.fulfilled, (state, action) => { state.paymentLoading = false; state.clientSecret = action.payload; })
+            .addCase(createPaymentIntent.rejected, (state, action) => { state.paymentLoading = false; state.error = action.payload; });
     },
 });
 

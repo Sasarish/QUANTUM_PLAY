@@ -19,7 +19,9 @@ import Cart from "./cart/Cart";
 import { getCart, resetCartState } from "./features/cart/cartSlice";
 import Shipping from "./order/Shipping";
 import ConfirmOrder from "./order/ConfirmOrder";
+import Payment from "./order/Payment";
 import OrderSuccess from "./order/OrderSuccess";
+import OrderFail from "./order/OrderFail";
 import MyOrders from "./order/MyOrders";
 import OrderDetails from "./order/OrderDetails";
 import AdminOrders from "./admin/AdminOrders";
@@ -63,7 +65,9 @@ const App = () => {
         {/* order flow */}
         <Route path="/shipping" element={<ProtectedRoute element={<Shipping />} />} />
         <Route path="/order/confirm" element={<ProtectedRoute element={<ConfirmOrder />} />} />
+        <Route path="/order/payment" element={<ProtectedRoute element={<Payment />} />} />
         <Route path="/order/success" element={<ProtectedRoute element={<OrderSuccess />} />} />
+        <Route path="/order/fail" element={<ProtectedRoute element={<OrderFail />} />} />
         <Route path="/orders" element={<ProtectedRoute element={<MyOrders />} />} />
         <Route path="/order/:id" element={<ProtectedRoute element={<OrderDetails />} />} />
         <Route path="/admin/orders" element={<ProtectedRoute element={<AdminOrders />} adminOnly={true} />} />

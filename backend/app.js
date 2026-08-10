@@ -3,6 +3,7 @@ import product from "./routes/productRoutes.js";
 import user from "./routes/userRoutes.js";
 import order from "./routes/orderRoutes.js";
 import cart from "./routes/cartRoutes.js";
+import payment from "./routes/paymentRoutes.js";
 import errorHandler from "./middleware/error.js";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
@@ -18,6 +19,7 @@ app.use("/api/v1/", product);
 app.use("/api/v1/", user);
 app.use("/api/v1/", order);
 app.use("/api/v1/", cart);
+app.use("/api/v1/", payment);
 
 app.use(errorHandler);
 

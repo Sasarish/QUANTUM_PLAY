@@ -1,17 +1,13 @@
 import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../Components/Navbar'
 import { PageTitle } from '../Components/PageTitle'
-import { createNewOrder, removeErrors } from '../features/order/orderSlice'
-import { clearCartItems } from '../features/cart/cartSlice'
-import toast from 'react-hot-toast'
 
 const ConfirmOrder = () => {
-    const { shippingInfo, error, success, order } = useSelector((state) => state.order);
+    const { shippingInfo } = useSelector((state) => state.order);
     const { cartItems } = useSelector((state) => state.cart);
     const { user } = useSelector((state) => state.user);
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const itemsPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -23,33 +19,8 @@ const ConfirmOrder = () => {
         if (!shippingInfo?.address) navigate("/shipping");
     }, [shippingInfo, navigate]);
 
-    useEffect(() => {
-        if (error) {
-            toast.error(error, { position: "top-center", autoClose: 3000 });
-            dispatch(removeErrors());
-        }
-        if (success && order) {
-            dispatch(clearCartItems());
-            navigate("/order/success");
-        }
-    }, [error, success, order, dispatch, navigate]);
-
-    const placeOrderHandler = () => {
-        dispatch(createNewOrder({
-            shippingAddress: shippingInfo,
-            orderItems: cartItems.map((item) => ({
-                name: item.name,
-                price: item.price,
-                quantity: item.quantity,
-                image: item.image,
-                product: item.product,
-            })),
-            paymentInfo: { id: `COD_${Date.now()}`, status: "Pending" },
-            itemPrice: itemsPrice,
-            taxPrice,
-            shippingPrice,
-            totalPrice,
-        }));
+    const proceedToPaymentHandler = () => {
+        navigate("/order/payment");
     };
 
     return (
@@ -95,10 +66,10 @@ const ConfirmOrder = () => {
                             </div>
                         </div>
                         <button
-                            onClick={placeOrderHandler}
+                            onClick={proceedToPaymentHandler}
                             className='w-full mt-6 bg-gray-900 hover:bg-black text-white font-semibold py-3 rounded-xl shadow-lg shadow-gray-200 transition-all active:scale-[0.98]'
                         >
-                            Place Order
+                            Proceed to Payment
                         </button>
                     </div>
                 </div>

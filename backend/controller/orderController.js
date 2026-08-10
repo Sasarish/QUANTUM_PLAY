@@ -1,15 +1,62 @@
+import Stripe from "stripe";
 import HandleError from "../helper/handleError.js";
 import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
 import Cart from "../models/cartModel.js";
+import { calculateOrderAmounts } from "../helper/priceCalculator.js";
+
+let stripe;
+const getStripe = () => {
+    if (!stripe) {
+        stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    }
+    return stripe;
+};
 
 //Creating new order
 export const createNewOrder = async (req, res, next) => {
-    const { shippingAddress, orderItems, paymentInfo, itemPrice, taxPrice, shippingPrice, totalPrice } = req.body;
+    const { shippingAddress, paymentInfo } = req.body;
+
+    if (!paymentInfo?.id) {
+        return next(new HandleError("Missing payment information", 400));
+    }
+
+    const cart = await Cart.findOne({ user: req.user._id });
+    if (!cart || cart.items.length === 0) {
+        return next(new HandleError("Your cart is empty", 400));
+    }
+
+    const { itemPrice, taxPrice, shippingPrice, totalPrice } = calculateOrderAmounts(cart.items);
+
+    //Independently verify the payment with Stripe — never trust a client-supplied payment status
+    const paymentIntent = await getStripe().paymentIntents.retrieve(paymentInfo.id);
+    if (
+        !paymentIntent ||
+        paymentIntent.status !== "succeeded" ||
+        paymentIntent.metadata?.userId !== req.user._id.toString() ||
+        paymentIntent.amount !== Math.round(totalPrice * 100)
+    ) {
+        return next(new HandleError("Payment could not be verified", 402));
+    }
+
+    //Prevent the same payment from being used to create more than one order
+    const alreadyUsed = await Order.exists({ "paymentInfo.id": paymentInfo.id });
+    if (alreadyUsed) {
+        return next(new HandleError("This payment has already been used for an order", 400));
+    }
+
+    const orderItems = cart.items.map((item) => ({
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image,
+        product: item.product,
+    }));
+
     const order = await Order.create({
         shippingAddress,
         orderItems,
-        paymentInfo,
+        paymentInfo: { id: paymentIntent.id, status: paymentIntent.status },
         itemPrice,
         taxPrice,
         shippingPrice,
