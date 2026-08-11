@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { Link } from 'react-router-dom'
 import Navbar from '../Components/Navbar'
 import Loader from '../Components/Loader'
 import { PageTitle } from '../Components/PageTitle'
@@ -60,7 +61,11 @@ const AdminOrders = () => {
                             <tbody>
                                 {orders.map((order) => (
                                     <tr key={order._id} className='border-t border-gray-100'>
-                                        <td className='p-3 font-mono text-xs'>{order._id}</td>
+                                        <td className='p-3 font-mono text-xs'>
+                                            <Link to={`/admin/order/${order._id}`} className='hover:underline hover:text-black'>
+                                                {order._id}
+                                            </Link>
+                                        </td>
                                         <td className='p-3'>{order.user?.name}<br /><span className='text-gray-400 text-xs'>{order.user?.email}</span></td>
                                         <td className='p-3'>{order.orderItems?.length}</td>
                                         <td className='p-3 font-semibold'>LKR {order.totalPrice}</td>

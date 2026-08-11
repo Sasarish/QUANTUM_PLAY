@@ -3,10 +3,24 @@ import Order from "../models/orderModel.js";
 import errorHandler from "../helper/handleError.js";
 import APIHelper from "../helper/APIHelper.js";
 import HandleError from "../helper/handleError.js";
+import { v2 as cloudinary } from "cloudinary";
 
 //create Products
-export const addProducts = async (req, res) => {
+export const addProducts = async (req, res, next) => {
   req.body.user = req.user.id;
+
+  if (!req.body.image || req.body.image.length === 0) {
+    return next(new HandleError("Please upload at least one product image", 400));
+  }
+
+  const images = Array.isArray(req.body.image) ? req.body.image : [req.body.image];
+  const uploadedImages = [];
+  for (const img of images) {
+    const result = await cloudinary.uploader.upload(img, { folder: "products" });
+    uploadedImages.push({ public_id: result.public_id, url: result.secure_url });
+  }
+  req.body.image = uploadedImages;
+
   const product = await Product.create(req.body);
   res.status(201).json({
     success: true,
@@ -17,14 +31,38 @@ export const addProducts = async (req, res) => {
 //update Products
 export const updateProduct = async (req, res, next) => {
   const id = req.params.id;
-  let product = await Product.findByIdAndUpdate(id, req.body, {
+  let product = await Product.findById(id);
+  if (!product) {
+    return next(new errorHandler("Product not found", 404))
+  }
+
+  if (req.body.image && req.body.image.length > 0) {
+    const images = Array.isArray(req.body.image) ? req.body.image : [req.body.image];
+
+    //Only replace on Cloudinary if these are new uploads (base64 data), not existing URLs being passed back unchanged
+    const isNewUpload = images.every((img) => typeof img === "string" && img.startsWith("data:"));
+    if (isNewUpload) {
+      for (const oldImg of product.image) {
+        await cloudinary.uploader.destroy(oldImg.public_id);
+      }
+      const uploadedImages = [];
+      for (const img of images) {
+        const result = await cloudinary.uploader.upload(img, { folder: "products" });
+        uploadedImages.push({ public_id: result.public_id, url: result.secure_url });
+      }
+      req.body.image = uploadedImages;
+    } else {
+      delete req.body.image;
+    }
+  } else {
+    delete req.body.image;
+  }
+
+  product = await Product.findByIdAndUpdate(id, req.body, {
     new: true,
     runValidators: true,
   });
 
-  if (!product) {
-    return next(new errorHandler("Product not found", 404))
-  }
   res.status(200).json({
     success: true,
     product,
@@ -34,11 +72,16 @@ export const updateProduct = async (req, res, next) => {
 //delete product
 export const deleteProduct = async (req, res, next) => {
   const id = req.params.id;
-  let product = await Product.findByIdAndDelete(id);
+  let product = await Product.findById(id);
 
   if (!product) {
     return next(new errorHandler("Product not found", 404))
   }
+
+  for (const img of product.image) {
+    await cloudinary.uploader.destroy(img.public_id);
+  }
+  await Product.findByIdAndDelete(id);
 
   res.status(200).json({
     success: true,
@@ -158,7 +201,8 @@ export const viewProductReviews = async (req, res, next) => {
 
 //Admin view all Products
 export const getAllProductsByAdmin = async (req, res) => {
-  const products = await Product.find();
+  const apiHelper = new APIHelper(Product.find(), req.query).search();
+  const products = await apiHelper.query;
   res.status(200).json({ success: true, products });
 };
 

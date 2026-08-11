@@ -100,7 +100,11 @@ const Navbar = () => {
                     <div className="py-1">
                       <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setProfileDropDownOpen(false)}>My Profile</Link>
                       {user?.role === "admin" ? (
-                        <Link to='/admin/orders' className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setProfileDropDownOpen(false)}>Orders</Link>
+                        <>
+                          <Link to='/admin/orders' className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setProfileDropDownOpen(false)}>Orders</Link>
+                          <Link to='/admin/products' className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setProfileDropDownOpen(false)}>Products</Link>
+                          <Link to='/admin/users' className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setProfileDropDownOpen(false)}>Users</Link>
+                        </>
                       ) : (
                         <Link to='/orders' className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setProfileDropDownOpen(false)}>My Orders</Link>
                       )}
@@ -125,6 +129,21 @@ const Navbar = () => {
 
       <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${open ? "max-h-112.5 opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"}`}>
         <div className="flex flex-col p-4 gap-4">
+          <form
+            className="flex items-center border border-slate-300 rounded overflow-hidden"
+            onSubmit={(e) => { handleSearch(e); setOpen(false); }}>
+            <input
+              type="text"
+              placeholder="Search Product"
+              className="px-3 py-2 text-sm w-full focus:outline-none"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button className="px-3 text-gray-500 hover:text-black transition" type="submit">
+              <Search size={18} />
+            </button>
+          </form>
+
           <Link to="/" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Home</Link>
           <Link to="/products" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Products</Link>
           <Link to="/about-us" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">About Us</Link>
@@ -148,7 +167,11 @@ const Navbar = () => {
 
               <Link to="/profile" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">My Profile</Link>
               {user?.role === "admin" ? (
-                <Link to="/admin/orders" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Orders</Link>
+                <>
+                  <Link to="/admin/orders" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Orders</Link>
+                  <Link to="/admin/products" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Products</Link>
+                  <Link to="/admin/users" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Users</Link>
+                </>
               ) : (
                 <Link to="/orders" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">My Orders</Link>
               )}

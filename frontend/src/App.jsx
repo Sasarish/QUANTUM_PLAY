@@ -25,6 +25,10 @@ import OrderFail from "./order/OrderFail";
 import MyOrders from "./order/MyOrders";
 import OrderDetails from "./order/OrderDetails";
 import AdminOrders from "./admin/AdminOrders";
+import AdminProductDashboard from "./admin/AdminProductDashboard";
+import AdminUserDashboard from "./admin/AdminUserDashboard";
+import Settings from "./Components/Settings";
+import AdminOrderDetails from "./admin/AdminOrderDetails";
 
 const App = () => {
   const { isAuthenticated } = useSelector((state) => state.user);
@@ -61,6 +65,7 @@ const App = () => {
         <Route path="/password/forget" element={<ForgetPassword />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
         <Route path="/cart" element={<ProtectedRoute element={<Cart />} />} />
+        <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
 
         {/* order flow */}
         <Route path="/shipping" element={<ProtectedRoute element={<Shipping />} />} />
@@ -71,6 +76,9 @@ const App = () => {
         <Route path="/orders" element={<ProtectedRoute element={<MyOrders />} />} />
         <Route path="/order/:id" element={<ProtectedRoute element={<OrderDetails />} />} />
         <Route path="/admin/orders" element={<ProtectedRoute element={<AdminOrders />} adminOnly={true} />} />
+        <Route path="/admin/products" element={<ProtectedRoute element={<AdminProductDashboard />} adminOnly={true} />} />
+        <Route path="/admin/users" element={<ProtectedRoute element={<AdminUserDashboard />} adminOnly={true} />} />
+        <Route path="/admin/order/:id" element={<ProtectedRoute element={<AdminOrderDetails />} adminOnly={true} />} />
       </Routes>
     </BrowserRouter>
   );

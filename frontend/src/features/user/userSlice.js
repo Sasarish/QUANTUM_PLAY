@@ -79,6 +79,37 @@ export const resetPassword = createAsyncThunk("user/resetPassword", async ({ tok
     }
 });
 
+//Admin: fetch all users
+export const getAdminUsers = createAsyncThunk("user/getAdminUsers", async (_, { rejectWithValue }) => {
+    try {
+        const { data } = await axios.get("/api/v1/admin/users");
+        return data.users;
+    } catch (error) {
+        return rejectWithValue(error.response?.data || "Could not fetch users");
+    }
+});
+
+//Admin: change a user's role
+export const updateUserRoleAdmin = createAsyncThunk("user/updateUserRoleAdmin", async ({ id, role }, { rejectWithValue }) => {
+    try {
+        const config = { headers: { "Content-Type": "application/json" } };
+        const { data } = await axios.put(`/api/v1/admin/user/${id}`, { role }, config);
+        return data.user;
+    } catch (error) {
+        return rejectWithValue(error.response?.data || "Could not update user role");
+    }
+});
+
+//Admin: delete a user
+export const deleteUserAdmin = createAsyncThunk("user/deleteUserAdmin", async (id, { rejectWithValue }) => {
+    try {
+        await axios.delete(`/api/v1/admin/user/${id}`);
+        return id;
+    } catch (error) {
+        return rejectWithValue(error.response?.data || "Could not delete user");
+    }
+});
+
 
 const userSlice = createSlice({
     name: "user",
@@ -89,10 +120,18 @@ const userSlice = createSlice({
         success: false,
         isAuthenticated: localStorage.getItem("isAuthenticated") === "true",
         message: null,
+        adminUsers: [],
+        adminUsersLoading: false,
+        roleUpdateSuccess: false,
+        userDeleteSuccess: false,
     },
     reducers: {
         removeErrors: (state) => { state.error = null; },
-        removeSuccess: (state) => { state.success = null; }
+        removeSuccess: (state) => { state.success = null; },
+        resetAdminUserState: (state) => {
+            state.roleUpdateSuccess = false;
+            state.userDeleteSuccess = false;
+        }
     },
     extraReducers: (builder) => {
 
@@ -220,8 +259,54 @@ const userSlice = createSlice({
                 state.error = action.payload?.message || "Reset password failed";
             });
 
+        builder
+            .addCase(getAdminUsers.pending, (state) => {
+                state.adminUsersLoading = true;
+                state.error = null;
+            })
+            .addCase(getAdminUsers.fulfilled, (state, action) => {
+                state.adminUsersLoading = false;
+                state.adminUsers = action.payload;
+            })
+            .addCase(getAdminUsers.rejected, (state, action) => {
+                state.adminUsersLoading = false;
+                state.adminUsers = [];
+                state.error = action.payload?.message || "Could not fetch users";
+            });
+
+        builder
+            .addCase(updateUserRoleAdmin.pending, (state) => {
+                state.adminUsersLoading = true;
+                state.error = null;
+            })
+            .addCase(updateUserRoleAdmin.fulfilled, (state, action) => {
+                state.adminUsersLoading = false;
+                state.roleUpdateSuccess = true;
+                state.adminUsers = state.adminUsers.map((u) =>
+                    u._id === action.payload._id ? action.payload : u
+                );
+            })
+            .addCase(updateUserRoleAdmin.rejected, (state, action) => {
+                state.adminUsersLoading = false;
+                state.error = action.payload?.message || "Could not update user role";
+            });
+
+        builder
+            .addCase(deleteUserAdmin.pending, (state) => {
+                state.adminUsersLoading = true;
+                state.error = null;
+            })
+            .addCase(deleteUserAdmin.fulfilled, (state, action) => {
+                state.adminUsersLoading = false;
+                state.userDeleteSuccess = true;
+                state.adminUsers = state.adminUsers.filter((u) => u._id !== action.payload);
+            })
+            .addCase(deleteUserAdmin.rejected, (state, action) => {
+                state.adminUsersLoading = false;
+                state.error = action.payload?.message || "Could not delete user";
+            });
     },
 });
 
-export const { removeErrors, removeSuccess } = userSlice.actions;
+export const { removeErrors, removeSuccess, resetAdminUserState } = userSlice.actions;
 export default userSlice.reducer;
