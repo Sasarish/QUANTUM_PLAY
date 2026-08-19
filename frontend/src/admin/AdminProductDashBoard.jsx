@@ -23,6 +23,7 @@ const emptyForm = {
     stock: "",
 };
 
+//Product  form
 const ProductFormModal = ({ product, onClose }) => {
     const dispatch = useDispatch();
     const { adminLoading } = useSelector((state) => state.product);
@@ -40,13 +41,15 @@ const ProductFormModal = ({ product, onClose }) => {
             }
             : emptyForm
     );
-    const [images, setImages] = useState([]); // new base64 images selected by admin
+    const [images, setImages] = useState([]); 
     const [previews, setPreviews] = useState(product?.image?.map((img) => img.url) || []);
 
+    //Handling input field states
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+    //handling image upload
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
         setImages([]);
@@ -63,6 +66,7 @@ const ProductFormModal = ({ product, onClose }) => {
         });
     };
 
+    //Handling product add and update
     const submitHandler = (e) => {
         e.preventDefault();
         if (!form.name || !form.description || !form.category || !form.price || !form.mrp || form.stock === "") {
@@ -79,9 +83,13 @@ const ProductFormModal = ({ product, onClose }) => {
             payload.image = images;
         }
 
+        // calling updateAdminProduct from productslice
         if (isEdit) {
             dispatch(updateAdminProduct({ id: product._id, productData: payload }));
-        } else {
+        } 
+        
+        // calling createProduct from productslice
+        else {
             dispatch(createProduct(payload));
         }
     };
@@ -160,14 +168,16 @@ const ProductFormModal = ({ product, onClose }) => {
     )
 }
 
+
 const AdminProductDashboard = () => {
     const dispatch = useDispatch();
     const { adminProducts, adminLoading, error, adminSuccess, adminDeleted } = useSelector((state) => state.product);
 
     const [searchTerm, setSearchTerm] = useState("");
-    const [modalProduct, setModalProduct] = useState(null); // null = closed, {} = add, product = edit
-    const [stockEdits, setStockEdits] = useState({}); // { [productId]: newStockValue }
+    const [modalProduct, setModalProduct] = useState(null); 
+    const [stockEdits, setStockEdits] = useState({}); 
 
+    //calling getAdminProducts from productSlice
     useEffect(() => {
         dispatch(getAdminProducts());
     }, [dispatch]);
@@ -186,14 +196,15 @@ const AdminProductDashboard = () => {
             toast.success("Product deleted", { position: "top-center", autoClose: 2000 });
             dispatch(resetAdminProductState());
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [error, adminSuccess, adminDeleted, dispatch]);
 
+    //Getting all product using search
     const searchSubmitHandler = (e) => {
         e.preventDefault();
         dispatch(getAdminProducts(searchTerm.trim()));
     };
 
+    //calling deleteAdminProduct from productSlice
     const deleteHandler = (id) => {
         if (window.confirm("Delete this product? This cannot be undone.")) {
             dispatch(deleteAdminProduct(id));
@@ -204,6 +215,7 @@ const AdminProductDashboard = () => {
         setStockEdits({ ...stockEdits, [id]: value });
     };
 
+    //Handling product stock update
     const stockSaveHandler = (id) => {
         const newStock = stockEdits[id];
         if (newStock === undefined || newStock === "") return;

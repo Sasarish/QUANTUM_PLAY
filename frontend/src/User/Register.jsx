@@ -21,6 +21,7 @@ const Register = () => {
   const navigate = useNavigate();
   const { success, error, loading } = useSelector((state) => state.user);
 
+  //Handling user details from the foam
   const handleChange = (e) => {
     if (e.target.name == "avatar") {
       const reader = new FileReader();
@@ -36,6 +37,7 @@ const Register = () => {
     }
   }
 
+  //Register new user to db 
   const registerNow = (e) => {
     e.preventDefault();
     if (!name || !email || !password || !avatar) {

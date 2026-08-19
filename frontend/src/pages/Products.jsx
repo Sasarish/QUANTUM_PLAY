@@ -54,6 +54,7 @@ export const Products = () => {
     useEffect(() => {
         dispatch(getProduct({ keyword, page: currentPage, category }));
     }, [dispatch, keyword, currentPage, category]);
+    
 
     //Fetching the live category list once
     useEffect(() => {

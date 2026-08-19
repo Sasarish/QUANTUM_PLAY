@@ -16,6 +16,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  //Handling user login
   const loginSubmit = (e) => {
     e.preventDefault();
     dispatch(login({ email, password }));

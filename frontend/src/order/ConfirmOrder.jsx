@@ -15,6 +15,7 @@ const ConfirmOrder = () => {
     const taxPrice = Number((itemsPrice * 0.02).toFixed(2));
     const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
+    //Make sure shipping info exists
     useEffect(() => {
         if (!shippingInfo?.address) navigate("/shipping");
     }, [shippingInfo, navigate]);

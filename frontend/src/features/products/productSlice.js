@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
+//Getting All products
 export const getProduct = createAsyncThunk("product/getProduct", async ({ keyword, page = 1, category }, { rejectWithValue }) => {
     try {
         let link = "/api/v1/products?page=" + page;
@@ -21,6 +21,7 @@ export const getProduct = createAsyncThunk("product/getProduct", async ({ keywor
     }
 });
 
+//Getting Single Product Details
 export const getProductDetails = createAsyncThunk("product/getProductDetails", async (id, { rejectWithValue }) => {
     try {
         const link = `/api/v1/product/${id}`;
@@ -32,6 +33,7 @@ export const getProductDetails = createAsyncThunk("product/getProductDetails", a
     }
 });
 
+//Review product
 export const newReview = createAsyncThunk("product/newReview", async (reviewData, { rejectWithValue }) => {
     try {
         const config = { headers: { "Content-Type": "application/json" } };
@@ -42,6 +44,7 @@ export const newReview = createAsyncThunk("product/newReview", async (reviewData
     }
 });
 
+//Product category
 export const getCategories = createAsyncThunk("product/getCategories", async (_, { rejectWithValue }) => {
     try {
         const { data } = await axios.get("/api/v1/categories");
@@ -51,6 +54,7 @@ export const getCategories = createAsyncThunk("product/getCategories", async (_,
     }
 });
 
+// check user purchase history in order to review
 export const checkCanReview = createAsyncThunk("product/checkCanReview", async (productId, { rejectWithValue }) => {
     try {
         const { data } = await axios.get(`/api/v1/can-review/${productId}`);
@@ -60,7 +64,7 @@ export const checkCanReview = createAsyncThunk("product/checkCanReview", async (
     }
 });
 
-//Admin: fetch all products (optionally filtered by keyword)
+//Admin fetch all products 
 export const getAdminProducts = createAsyncThunk("product/getAdminProducts", async (keyword = "", { rejectWithValue }) => {
     try {
         const link = keyword ? `/api/v1/admin/products?keyword=${encodeURIComponent(keyword)}` : "/api/v1/admin/products";
@@ -71,7 +75,7 @@ export const getAdminProducts = createAsyncThunk("product/getAdminProducts", asy
     }
 });
 
-//Admin: create a new product
+//Admin create a new product
 export const createProduct = createAsyncThunk("product/createProduct", async (productData, { rejectWithValue }) => {
     try {
         const config = { headers: { "Content-Type": "application/json" } };
@@ -82,7 +86,7 @@ export const createProduct = createAsyncThunk("product/createProduct", async (pr
     }
 });
 
-//Admin: update an existing product (details and/or stock)
+//Admin update an existing product 
 export const updateAdminProduct = createAsyncThunk("product/updateAdminProduct", async ({ id, productData }, { rejectWithValue }) => {
     try {
         const config = { headers: { "Content-Type": "application/json" } };
@@ -93,7 +97,7 @@ export const updateAdminProduct = createAsyncThunk("product/updateAdminProduct",
     }
 });
 
-//Admin: delete a product
+//Admin delete a product
 export const deleteAdminProduct = createAsyncThunk("product/deleteAdminProduct", async (id, { rejectWithValue }) => {
     try {
         await axios.delete(`/api/v1/admin/product/${id}`);
@@ -135,6 +139,8 @@ const productSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
+        
+        //Builder for getProduct function
         builder
             .addCase(getProduct.pending, (state) => {
                 state.loading = true;
@@ -154,6 +160,7 @@ const productSlice = createSlice({
                 state.error = action.payload || "Something went wrong";
             });
 
+        //Builder for getProductDetails function 
         builder
             .addCase(getProductDetails.pending, (state) => {
                 state.loading = true;
@@ -169,7 +176,8 @@ const productSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload || "Something went wrong";
             });
-
+        
+        //Builder for newReview function
         builder
             .addCase(newReview.pending, (state) => {
                 state.reviewLoading = true;
@@ -185,6 +193,7 @@ const productSlice = createSlice({
                 state.error = action.payload || "Something went wrong";
             });
 
+        //Builder for getCategories function
         builder
             .addCase(getCategories.fulfilled, (state, action) => {
                 state.categories = action.payload;
@@ -193,6 +202,8 @@ const productSlice = createSlice({
                 state.error = action.payload || "Something went wrong";
             });
 
+
+        //Builder for checkCanReview function 
         builder
             .addCase(checkCanReview.fulfilled, (state, action) => {
                 state.canReview = action.payload;
@@ -201,6 +212,8 @@ const productSlice = createSlice({
                 state.canReview = false;
             });
 
+        
+        //Builder for getAdminProducts function
         builder
             .addCase(getAdminProducts.pending, (state) => {
                 state.adminLoading = true;
@@ -216,6 +229,8 @@ const productSlice = createSlice({
                 state.error = action.payload || "Something went wrong";
             });
 
+
+        //Builder for createProduct function
         builder
             .addCase(createProduct.pending, (state) => {
                 state.adminLoading = true;
@@ -231,6 +246,8 @@ const productSlice = createSlice({
                 state.error = action.payload || "Something went wrong";
             });
 
+        
+        //Builder for updateAdminProduct function
         builder
             .addCase(updateAdminProduct.pending, (state) => {
                 state.adminLoading = true;
@@ -247,7 +264,9 @@ const productSlice = createSlice({
                 state.adminLoading = false;
                 state.error = action.payload || "Something went wrong";
             });
+        
 
+        //Builder for deleteAdminProduct function
         builder
             .addCase(deleteAdminProduct.pending, (state) => {
                 state.adminLoading = true;

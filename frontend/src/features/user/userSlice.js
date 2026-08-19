@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import axios from "axios";
 
+//New User Register
 export const register = createAsyncThunk("user/register", async (userData, { rejectWithValue }) => {
     try {
         const config = { headers: { "Content-Type": "multipart/form-data" } };
@@ -11,6 +12,7 @@ export const register = createAsyncThunk("user/register", async (userData, { rej
     }
 })
 
+//Getting logged user data
 export const loadUser = createAsyncThunk("user/loadUser", async (_, { rejectWithValue }) => {
     try {
         const { data } = await axios.get("/api/v1/profile");
@@ -20,6 +22,7 @@ export const loadUser = createAsyncThunk("user/loadUser", async (_, { rejectWith
     }
 });
 
+//User Login
 export const login = createAsyncThunk("user/login", async ({ email, password }, { rejectWithValue }) => {
     try {
         const config = { headers: { "Content-Type": "application/json" } };
@@ -30,6 +33,7 @@ export const login = createAsyncThunk("user/login", async ({ email, password }, 
     }
 });
 
+//Logout user
 export const logout = createAsyncThunk("user/logout", async (_, { rejectWithValue }) => {
     try {
         const { data } = await axios.get("/api/v1/logout");
@@ -39,6 +43,7 @@ export const logout = createAsyncThunk("user/logout", async (_, { rejectWithValu
     }
 });
 
+//Update user Profile
 export const updateProfile = createAsyncThunk("user/updateProfile", async (userData, { rejectWithValue }) => {
     try {
         const config = { headers: { "Content-Type": "multipart/form-data" } };
@@ -49,6 +54,7 @@ export const updateProfile = createAsyncThunk("user/updateProfile", async (userD
     }
 });
 
+//Updating user password
 export const updatePassword = createAsyncThunk("user/updatePassword", async (passwords, { rejectWithValue }) => {
     try {
         const config = { headers: { "Content-Type": "application/json" } };
@@ -59,6 +65,7 @@ export const updatePassword = createAsyncThunk("user/updatePassword", async (pas
     }
 });
 
+//Forget Password request
 export const forgetPassword = createAsyncThunk("user/forgetPassword", async ({ email }, { rejectWithValue }) => {
     try {
         const config = { headers: { "Content-Type": "application/json" } };
@@ -69,6 +76,7 @@ export const forgetPassword = createAsyncThunk("user/forgetPassword", async ({ e
     }
 });
 
+//Password reset submission
 export const resetPassword = createAsyncThunk("user/resetPassword", async ({ token, userData }, { rejectWithValue }) => {
     try {
         const config = { headers: { "Content-Type": "application/json" } }
@@ -79,7 +87,7 @@ export const resetPassword = createAsyncThunk("user/resetPassword", async ({ tok
     }
 });
 
-//Admin: fetch all users
+//Admin fetch all users
 export const getAdminUsers = createAsyncThunk("user/getAdminUsers", async (_, { rejectWithValue }) => {
     try {
         const { data } = await axios.get("/api/v1/admin/users");
@@ -89,7 +97,7 @@ export const getAdminUsers = createAsyncThunk("user/getAdminUsers", async (_, { 
     }
 });
 
-//Admin: change a user's role
+//Admin change a user's role
 export const updateUserRoleAdmin = createAsyncThunk("user/updateUserRoleAdmin", async ({ id, role }, { rejectWithValue }) => {
     try {
         const config = { headers: { "Content-Type": "application/json" } };
@@ -100,7 +108,7 @@ export const updateUserRoleAdmin = createAsyncThunk("user/updateUserRoleAdmin", 
     }
 });
 
-//Admin: delete a user
+//Admin delete a user
 export const deleteUserAdmin = createAsyncThunk("user/deleteUserAdmin", async (id, { rejectWithValue }) => {
     try {
         await axios.delete(`/api/v1/admin/user/${id}`);
@@ -135,6 +143,7 @@ const userSlice = createSlice({
     },
     extraReducers: (builder) => {
 
+        //builder for register function
         builder
             .addCase(register.pending, (state) => { state.loading = true; state.error = null; })
             .addCase(register.fulfilled, (state, action) => {
@@ -152,7 +161,9 @@ const userSlice = createSlice({
                 state.user = null;
                 state.isAuthenticated = false;
             })
-
+        
+        
+        //builder for login function
         builder
             .addCase(login.pending, (state) => { state.loading = true; state.error = null; })
             .addCase(login.fulfilled, (state, action) => {
@@ -171,6 +182,8 @@ const userSlice = createSlice({
                 state.isAuthenticated = false;
             })
 
+
+        //builder for loaduser function
         builder
             .addCase(loadUser.pending, (state) => { state.loading = true; state.error = null; })
             .addCase(loadUser.fulfilled, (state, action) => {
@@ -190,6 +203,8 @@ const userSlice = createSlice({
                 localStorage.removeItem("isAuthenticated");
             })
 
+
+        //Builder for logout function
         builder
             .addCase(logout.pending, (state) => { state.loading = true; state.error = null; })
             .addCase(logout.fulfilled, (state, action) => {
@@ -205,6 +220,8 @@ const userSlice = createSlice({
                 state.error = action.payload?.message || "Failed to logout user profile";
             })
 
+
+        //Builder for updateProfile function
         builder
             .addCase(updateProfile.pending, (state) => { state.loading = true; state.error = null; })
             .addCase(updateProfile.fulfilled, (state, action) => {
@@ -219,6 +236,8 @@ const userSlice = createSlice({
                 state.error = action.payload?.message || "Profile upload failed";
             });
 
+            
+        //Builder for updatePassword function
         builder
             .addCase(updatePassword.pending, (state) => { state.loading = true; state.error = null; })
             .addCase(updatePassword.fulfilled, (state, action) => {
@@ -230,7 +249,9 @@ const userSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload?.message || "Password update failed"
             });
-
+            
+        
+        //Builder for forgetPassword function
         builder
             .addCase(forgetPassword.pending, (state) => { state.loading = true; state.error = null; })
             .addCase(forgetPassword.fulfilled, (state, action) => {
@@ -244,6 +265,8 @@ const userSlice = createSlice({
                 state.error = action.payload?.message || "Forget Password Failed";
             });
 
+         
+        //Builder for resetPassword function    
         builder
             .addCase(resetPassword.pending, (state) => { state.loading = true; state.error = null; })
             .addCase(resetPassword.fulfilled, (state, action) => {
@@ -258,7 +281,9 @@ const userSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload?.message || "Reset password failed";
             });
-
+            
+        
+        //Builder for getAdminUsers function
         builder
             .addCase(getAdminUsers.pending, (state) => {
                 state.adminUsersLoading = true;
@@ -274,6 +299,8 @@ const userSlice = createSlice({
                 state.error = action.payload?.message || "Could not fetch users";
             });
 
+        
+        //Builder for updateUserRoleAdmin function 
         builder
             .addCase(updateUserRoleAdmin.pending, (state) => {
                 state.adminUsersLoading = true;
@@ -290,7 +317,9 @@ const userSlice = createSlice({
                 state.adminUsersLoading = false;
                 state.error = action.payload?.message || "Could not update user role";
             });
+        
 
+        //Builder for deleteUserAdmin function
         builder
             .addCase(deleteUserAdmin.pending, (state) => {
                 state.adminUsersLoading = true;

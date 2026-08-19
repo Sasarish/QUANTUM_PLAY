@@ -8,6 +8,7 @@ const Profile = () => {
     const { user, isAuthenticated, loading } = useSelector((state) => state.user);
     const navigate = useNavigate();
 
+    //Validating user login status
     useEffect(() => {
         if (isAuthenticated === false) {
             navigate("/login")
@@ -23,8 +24,10 @@ const Profile = () => {
                     <h2 className='mt-6 text-center text-3xl font-extrabold text-black'> My Profile</h2>
                 </div>
 
+                {/*Profile card */}
                 <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-xl'>
                     <div className='bg-white py-10 px-6 shadow-sm rounded sm:px-12 flex flex-col items-center border border-gray-100'>
+                       
                         <div className=' w-36 h-36 mb-8 mt-2'>
                             <img
                                 src={user?.avatar?.url}

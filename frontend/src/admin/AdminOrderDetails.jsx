@@ -17,6 +17,7 @@ const AdminOrderDetails = () => {
     const dispatch = useDispatch();
     const { order, loading, error, isUpdated, isDeleted } = useSelector((state) => state.order);
 
+    //calling getOrderDetails from orderslice
     useEffect(() => {
         dispatch(getOrderDetails(id));
     }, [dispatch, id]);
@@ -38,10 +39,12 @@ const AdminOrderDetails = () => {
         }
     }, [error, isUpdated, isDeleted, dispatch, id, navigate]);
 
+    //Handling order status
     const statusChangeHandler = (status) => {
         dispatch(updateOrder({ id, status }));
     };
 
+    //Delete order
     const deleteHandler = () => {
         if (window.confirm("Delete this order? This cannot be undone.")) {
             dispatch(deleteOrder(id));

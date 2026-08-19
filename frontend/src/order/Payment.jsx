@@ -40,13 +40,13 @@ const PaymentForm = () => {
     const taxPrice = Number((itemsPrice * 0.02).toFixed(2));
     const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
+    //Payment processing
     useEffect(() => {
         if (!shippingInfo?.address || cartItems.length === 0) {
             navigate("/shipping");
             return;
         }
         dispatch(createPaymentIntent(totalPrice));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch]);
 
     useEffect(() => {
@@ -56,6 +56,7 @@ const PaymentForm = () => {
         }
     }, [error, dispatch]);
 
+    //Handling the payment and new order
     const submitHandler = async (e) => {
         e.preventDefault();
         if (!stripe || !elements || !clientSecret) return;

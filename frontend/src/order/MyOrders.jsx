@@ -13,6 +13,7 @@ const MyOrders = () => {
     const { orders, loading, error } = useSelector((state) => state.order);
     const dispatch = useDispatch();
 
+    //Calling the myOrders function from Orderslice
     useEffect(() => { dispatch(myOrders()); }, [dispatch]);
 
     useEffect(() => {

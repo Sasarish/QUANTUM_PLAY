@@ -129,7 +129,7 @@ export const getSingleProduct = async (req, res, next) => {
   return res.status(200).json({ success: true, product });
 };
 
-//Product reviews
+//Create Product review
 export const createProductReview = async (req, res, next) => {
   const { rating, comment, productId } = req.body;
 

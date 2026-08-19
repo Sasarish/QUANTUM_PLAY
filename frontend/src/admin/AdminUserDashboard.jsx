@@ -17,6 +17,7 @@ const AdminUserDashboard = () => {
     const dispatch = useDispatch();
     const { adminUsers, adminUsersLoading, error, roleUpdateSuccess, userDeleteSuccess, user: loggedInUser } = useSelector((state) => state.user);
 
+    //Calling getAdminUsers userSlice
     useEffect(() => {
         dispatch(getAdminUsers());
     }, [dispatch]);
@@ -36,10 +37,12 @@ const AdminUserDashboard = () => {
         }
     }, [error, roleUpdateSuccess, userDeleteSuccess, dispatch]);
 
+    //Calling updateUserRoleAdmin userSlice
     const roleChangeHandler = (id, role) => {
         dispatch(updateUserRoleAdmin({ id, role }));
     };
 
+    //Calling deleteHandler userSlice
     const deleteHandler = (id, name) => {
         if (window.confirm(`Delete user "${name}"? This cannot be undone.`)) {
             dispatch(deleteUserAdmin(id));

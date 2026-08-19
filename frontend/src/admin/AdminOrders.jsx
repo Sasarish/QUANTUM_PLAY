@@ -32,7 +32,10 @@ const AdminOrders = () => {
         }
     }, [error, isUpdated, isDeleted, dispatch]);
 
+    //Calling update order from orderslice
     const statusChangeHandler = (id, status) => dispatch(updateOrder({ id, status }));
+
+    //Calling update order from orderslice
     const deleteHandler = (id) => { if (window.confirm("Delete this order?")) dispatch(deleteOrder(id)); };
 
     return loading ? <Loader /> : (

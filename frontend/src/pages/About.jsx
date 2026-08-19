@@ -25,7 +25,6 @@ const About = () => {
         {/* Story / Mission Section */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20 bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-gray-100">
           <div className="aspect-video md:aspect-square lg:aspect-video overflow-hidden rounded-xl bg-slate-100 relative group flex items-center justify-center">
-            {/* If you have a real image, replace the next block with an <img> tag */}
             <div className="absolute inset-0 bg-slate-200 flex items-center justify-center text-slate-400 group-hover:scale-105 transition-transform duration-700">
               <Gamepad2 size={80} className="opacity-40" />
             </div>

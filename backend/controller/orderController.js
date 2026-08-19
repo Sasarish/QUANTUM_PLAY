@@ -5,6 +5,7 @@ import Product from "../models/productModel.js";
 import Cart from "../models/cartModel.js";
 import { calculateOrderAmounts } from "../helper/priceCalculator.js";
 
+//Configuring stripe
 let stripe;
 const getStripe = () => {
     if (!stripe) {
@@ -65,7 +66,7 @@ export const createNewOrder = async (req, res, next) => {
         user: req.user._id,
     });
 
-    // Empty the user's cart now that the order exists
+    // Empty the user's cart after the order creation
     await Cart.findOneAndUpdate({ user: req.user._id }, { items: [] });
 
     res.status(201).json({ success: true, order });

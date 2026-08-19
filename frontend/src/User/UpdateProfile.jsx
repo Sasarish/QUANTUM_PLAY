@@ -40,6 +40,7 @@ const UpdateProfile = () => {
         }
     }, [user, dispatch, error, success, navigate]);
 
+    //Handle image update
     const handleChange = (e) => {
         const reader = new FileReader();
         reader.onload = () => {
@@ -51,6 +52,7 @@ const UpdateProfile = () => {
         reader.readAsDataURL(e.target.files[0]);
     };
 
+    //Updating user details
     const updateProfileSubmit = (e) => {
         e.preventDefault();
         const myForm = new FormData();

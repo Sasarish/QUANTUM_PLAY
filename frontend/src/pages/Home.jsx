@@ -14,6 +14,7 @@ const Home = () => {
   const { products, productCount, loading, error } = useSelector((state) => state.product);
   const dispatch = useDispatch();
 
+  //Calling getProduct from productSlice
   useEffect(() => {
     dispatch(getProduct({ keyword: "" }));
   }, [dispatch]);

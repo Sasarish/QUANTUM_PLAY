@@ -18,6 +18,7 @@ const Shipping = () => {
     const [pinCode, setPinCode] = useState(shippingInfo?.pinCode || "");
     const [phoneNo, setPhoneNo] = useState(shippingInfo?.phoneNo || "");
 
+    //Saving shipping address information
     const submitHandler = (e) => {
         e.preventDefault();
         if (cartItems.length === 0) { navigate("/cart"); return; }

@@ -24,6 +24,7 @@ const ForgetPassword = () => {
         }
     }, [dispatch, error, success]);
 
+    //Handling forget password request
     const forgetPasswordSubmit = (e) => {
         e.preventDefault();
         dispatch(forgetPassword({ email }));

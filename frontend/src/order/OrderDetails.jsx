@@ -14,6 +14,7 @@ const OrderDetails = () => {
     const { order, loading, error } = useSelector((state) => state.order);
     const dispatch = useDispatch();
 
+    //calling getOrderDetails function from orderSlice
     useEffect(() => { dispatch(getOrderDetails(id)); }, [dispatch, id]);
 
     useEffect(() => {

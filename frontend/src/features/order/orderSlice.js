@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+//Creating a new order
 export const createNewOrder = createAsyncThunk("order/createNewOrder", async (order, { rejectWithValue }) => {
     try {
         const { data } = await axios.post("/api/v1/new/order", order);
@@ -10,6 +11,7 @@ export const createNewOrder = createAsyncThunk("order/createNewOrder", async (or
     }
 });
 
+//Payment Processing
 export const createPaymentIntent = createAsyncThunk("order/createPaymentIntent", async (amount, { rejectWithValue }) => {
     try {
         const config = { headers: { "Content-Type": "application/json" } };
@@ -20,6 +22,7 @@ export const createPaymentIntent = createAsyncThunk("order/createPaymentIntent",
     }
 });
 
+//Getting user order history
 export const myOrders = createAsyncThunk("order/myOrders", async (_, { rejectWithValue }) => {
     try {
         const { data } = await axios.get("/api/v1/orders/user");
@@ -29,6 +32,7 @@ export const myOrders = createAsyncThunk("order/myOrders", async (_, { rejectWit
     }
 });
 
+//Getting single order details
 export const getOrderDetails = createAsyncThunk("order/getOrderDetails", async (id, { rejectWithValue }) => {
     try {
         const { data } = await axios.get(`/api/v1/order/${id}`);
@@ -38,6 +42,7 @@ export const getOrderDetails = createAsyncThunk("order/getOrderDetails", async (
     }
 });
 
+//Admin all order
 export const getAllOrdersByAdmin = createAsyncThunk("order/getAllOrdersByAdmin", async (_, { rejectWithValue }) => {
     try {
         const { data } = await axios.get("/api/v1/admin/orders");
@@ -47,6 +52,7 @@ export const getAllOrdersByAdmin = createAsyncThunk("order/getAllOrdersByAdmin",
     }
 });
 
+//Admin update order
 export const updateOrder = createAsyncThunk("order/updateOrder", async ({ id, status }, { rejectWithValue }) => {
     try {
         const { data } = await axios.put(`/api/v1/admin/order/${id}`, { status });
@@ -56,6 +62,7 @@ export const updateOrder = createAsyncThunk("order/updateOrder", async ({ id, st
     }
 });
 
+//Admin delete order
 export const deleteOrder = createAsyncThunk("order/deleteOrder", async (id, { rejectWithValue }) => {
     try {
         const { data } = await axios.delete(`/api/v1/admin/order/${id}`);

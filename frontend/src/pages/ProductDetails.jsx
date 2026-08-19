@@ -24,17 +24,20 @@ const ProductDetails = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
 
+    //Calling the getProductDetails from ProductSlice
     useEffect(() => {
         if (id) {
             dispatch(getProductDetails(id));
         }
     }, [dispatch, id]);
 
+    //Calling the checkCanReview from ProductSlice
     useEffect(() => {
         if (id && isAuthenticated) {
             dispatch(checkCanReview(id));
         }
     }, [dispatch, id, isAuthenticated]);
+
 
     useEffect(() => {
         if (error) {
@@ -120,6 +123,8 @@ const ProductDetails = () => {
 
                 {/*Product Details section */}
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-12 bg-white =-8'>
+
+                    {/*Image section */}
                     <div>
                         <div className='aspect-square overflow-hidden rounded-xl'>
                             <img src={imageUrl} alt={product.name}
@@ -128,6 +133,7 @@ const ProductDetails = () => {
                         </div>
                     </div>
 
+                    {/*Product Details section Right side*/}
                     <div className='flex flex-col'>
                         <h3 className='text-3xl font-semibold text-gray-900 mb-2'>{product.name}</h3>
                         <div className='flex items-center gap-4 mb-4'>

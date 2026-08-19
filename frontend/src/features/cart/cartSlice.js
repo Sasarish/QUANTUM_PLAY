@@ -54,7 +54,7 @@ const cartSlice = createSlice({
     reducers: {
         removeErrors: (state) => { state.error = null; },
         removeMessage: (state) => { state.message = null; },
-        // called on logout — cart now lives in the DB, not localStorage
+        // called on logout — cart will remove from both local and db
         resetCartState: (state) => {
             state.cartItems = [];
             state.loading = false;
@@ -64,6 +64,7 @@ const cartSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            //Builder for getCart function
             .addCase(getCart.pending, (state) => {
                 state.loading = true;
             })
@@ -76,7 +77,7 @@ const cartSlice = createSlice({
                 state.error = action.payload;
             })
 
-
+            //Builder for addToCart function
             .addCase(addToCartItem.pending, (state) => {
                 state.loading = true;
                 state.error = null;

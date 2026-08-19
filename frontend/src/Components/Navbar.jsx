@@ -33,6 +33,8 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 w-full bg-white shadow-md z-50">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+
+        {/*Logo */}
         <Link
           to="/"
           className="flex items-center gap-2 text-2xl font-bold text-grey-600"
@@ -41,6 +43,7 @@ const Navbar = () => {
           <span>QUANTUM PLAY</span>
         </Link>
 
+        {/*Pages */}
         <div className="hidden md:flex items-center gap-8">
           <Link to="/" className="text-gray-700 hover:text-black transition font-semibold">Home</Link>
           <Link to="/products" className="text-gray-700 hover:text-black transition font-semibold">Products</Link>
@@ -48,8 +51,10 @@ const Navbar = () => {
           <Link to="/contact-us" className="text-gray-700 hover:text-black transition font-semibold">Contact Us</Link>
         </div>
 
+        {/*Right section */}
         <div className="flex items-center gap-4">
 
+          {/*Search section */}
           <form
             className="hidden sm:flex items-center border border-slate-300 rounded overflow-hidden"
             onSubmit={handleSearch}>
@@ -65,6 +70,7 @@ const Navbar = () => {
             </button>
           </form>
 
+          {/*Cart button */}
           <Link to="/cart" className="relative text-gray-700 hover:text-black transition">
             <ShoppingCart />
             {cartItems.length > 0 &&
@@ -74,6 +80,7 @@ const Navbar = () => {
             }
           </Link>
 
+          {/*Login and Registeration */}
           {!isAuthenticated ?
             (
               <div className="hidden sm:flex items-center gap-4">
@@ -91,6 +98,7 @@ const Navbar = () => {
                     className="w-10 h-10 rounded-full object-cover border border-gray-600" />
                 </button>
 
+                {/*User setting and options */}
                 {profileDropDownOpen && (
                   <div className="absolute right-0 mt-2 bg-white border-gray-200 rounded-md shadow-lg z-50">
                     <div className="px-4 py-3 border-b border-gray-100">
@@ -99,6 +107,8 @@ const Navbar = () => {
                     </div>
                     <div className="py-1">
                       <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setProfileDropDownOpen(false)}>My Profile</Link>
+
+                      {/*Checking whether admin or User */}
                       {user?.role === "admin" ? (
                         <>
                           <Link to='/admin/orders' className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setProfileDropDownOpen(false)}>Orders</Link>
@@ -121,6 +131,8 @@ const Navbar = () => {
               </div>
             )}
 
+
+          {/*Small devices */}
           <button onClick={() => setOpen(!open)} className="md:hidden text-gray-700">
             {open ? <X /> : <Menu />}
           </button>
@@ -129,6 +141,8 @@ const Navbar = () => {
 
       <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${open ? "max-h-112.5 opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"}`}>
         <div className="flex flex-col p-4 gap-4">
+          
+          {/*Search section */}
           <form
             className="flex items-center border border-slate-300 rounded overflow-hidden"
             onSubmit={(e) => { handleSearch(e); setOpen(false); }}>
@@ -144,11 +158,13 @@ const Navbar = () => {
             </button>
           </form>
 
+          {/*User setting and options */}
           <Link to="/" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Home</Link>
           <Link to="/products" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Products</Link>
           <Link to="/about-us" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">About Us</Link>
           <Link to="/contact-us" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Contact Us</Link>
 
+          {/*Login and register */}
           {!isAuthenticated ? (
             <div className="flex flex-col gap-4">
               <Link to="/login" className="text-gray-700 hover:text-blue-600 transition font-semibold" onClick={() => setOpen(false)}>Login</Link>
@@ -166,6 +182,8 @@ const Navbar = () => {
               </div>
 
               <Link to="/profile" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">My Profile</Link>
+             
+              {/*Checking user role */}
               {user?.role === "admin" ? (
                 <>
                   <Link to="/admin/orders" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Orders</Link>

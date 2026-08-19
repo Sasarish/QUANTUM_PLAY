@@ -28,6 +28,7 @@ const UpdatePassword = () => {
         }
     }, [dispatch, error, success, navigate]);
 
+    //Updating user password    
     const updatePasswordSubmit = (e) => {
         e.preventDefault();
 

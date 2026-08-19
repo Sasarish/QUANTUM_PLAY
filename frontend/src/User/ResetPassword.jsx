@@ -29,6 +29,7 @@ const ResetPassword = () => {
         }
     }, [dispatch, error, success, navigate])
 
+    //Handling password reset 
     const resetPasswordSubmit = (e) => {
         e.preventDefault()
 
