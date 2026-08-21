@@ -45,7 +45,7 @@ const Navbar = () => {
 
         {/*Pages */}
         <div className="hidden md:flex items-center gap-8">
-          <Link to="/" className="text-gray-700 hover:text-black transition font-semibold">Home</Link>
+          <Link to="/exchange" className="text-gray-700 hover:text-black transition font-semibold">Exchange</Link>
           <Link to="/products" className="text-gray-700 hover:text-black transition font-semibold">Products</Link>
           <Link to="/about-us" className="text-gray-700 hover:text-black transition font-semibold">About Us</Link>
           <Link to="/contact-us" className="text-gray-700 hover:text-black transition font-semibold">Contact Us</Link>
@@ -141,7 +141,7 @@ const Navbar = () => {
 
       <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${open ? "max-h-112.5 opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"}`}>
         <div className="flex flex-col p-4 gap-4">
-          
+
           {/*Search section */}
           <form
             className="flex items-center border border-slate-300 rounded overflow-hidden"
@@ -159,7 +159,7 @@ const Navbar = () => {
           </form>
 
           {/*User setting and options */}
-          <Link to="/" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Home</Link>
+          <Link to="/exchange" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Exchange</Link>
           <Link to="/products" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Products</Link>
           <Link to="/about-us" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">About Us</Link>
           <Link to="/contact-us" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">Contact Us</Link>
@@ -182,7 +182,7 @@ const Navbar = () => {
               </div>
 
               <Link to="/profile" onClick={() => setOpen(false)} className="text-gray-700 hover:text-black transition font-semibold">My Profile</Link>
-             
+
               {/*Checking user role */}
               {user?.role === "admin" ? (
                 <>

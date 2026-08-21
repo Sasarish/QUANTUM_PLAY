@@ -1,2 +1,3 @@
-backend/config/config.env 
-.gitignore
+backend/config/config.env
+backend/quantumplay-*.json
+node_modules/

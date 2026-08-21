@@ -29,6 +29,7 @@ import AdminProductDashboard from "./admin/AdminProductDashboard";
 import AdminUserDashboard from "./admin/AdminUserDashboard";
 import Settings from "./Components/Settings";
 import AdminOrderDetails from "./admin/AdminOrderDetails";
+import Exchange from "./pages/Exchange";
 
 const App = () => {
   const { isAuthenticated } = useSelector((state) => state.user);
@@ -66,6 +67,7 @@ const App = () => {
         <Route path="/reset/:token" element={<ResetPassword />} />
         <Route path="/cart" element={<ProtectedRoute element={<Cart />} />} />
         <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
+        <Route path="/exchange" element={<ProtectedRoute element={<Exchange />} />} />
 
         {/* order flow */}
         <Route path="/shipping" element={<ProtectedRoute element={<Shipping />} />} />
